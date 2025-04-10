@@ -118,9 +118,9 @@ matrix:
 
 # these taken from midhun's quick-mas-setup
 clients:
-  - client_id: 0000000000007777000SYNAPSE      ##此处更改为你的
-    client_auth_method: client_secret_basic    #  ##此处更改为你的
-    client_secret: 'kMKhpWW5evSedXz1777777'    #  ##此处更改为你的
+  - client_id: 0000000000007777000SYNAPSE      ##此处更改为你的可以随机生成token 注意与home文件中配置相同
+    client_auth_method: client_secret_basic    #  此处更改为你的可以随机生成token 注意与home文件中配置相同
+    client_secret: 'kMKhpWW5evSedXz1777777'    #  此处更改为你的可以随机生成token 注意与home文件中配置相同
 
 templates:
   path: /usr/local/share/mas-cli/templates/
