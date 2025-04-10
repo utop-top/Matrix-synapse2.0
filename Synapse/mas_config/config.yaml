@@ -27,8 +27,8 @@ http:
   - 127.0.0.1/8
   - fd00::/8
   - ::1/128
-  public_base: https://auth.aosn.de
-  issuer: https://auth.aosn.de/
+  public_base: https://auth.example.com       #####此处更改为你的
+  issuer: https://auth.example.com/           #####此处更改为你的
 database:
   host: mas-db
   database: mas
@@ -109,18 +109,18 @@ passwords:
     algorithm: argon2id
   minimum_complexity: 3
 matrix:
-  homeserver: aosn.de
+  homeserver: example.com     #  ##此处更改为你的synapse服务域名
   secret: 'n2vHYeTYrGMPY0d96Nh0ALEuu5nqBZ4y'
-  endpoint: https://aosn.de/
+  endpoint: https://example.com/       #  ##此处更改为你的synapse服务域名     
 
 # please keep config above this point as close as possible to the original generated config
 # so that upstream generated config changes can be detected
 
 # these taken from midhun's quick-mas-setup
 clients:
-  - client_id: 0000000000000000000SYNAPSE
-    client_auth_method: client_secret_basic
-    client_secret: 'kMKhpWW5evSedXz1t8bSlw'
+  - client_id: 0000000000007777000SYNAPSE      ##此处更改为你的
+    client_auth_method: client_secret_basic    #  ##此处更改为你的
+    client_secret: 'kMKhpWW5evSedXz1777777'    #  ##此处更改为你的
 
 templates:
   path: /usr/local/share/mas-cli/templates/
@@ -143,7 +143,7 @@ policy:
 
 
 account:
-  password_registration_enabled: false   #注册关闭
+  password_registration_enabled: true   #false注册关闭 true注册开启
   displayname_change_allowed: true
   password_change_allowed: true
   password_recovery_enabled: true
@@ -156,15 +156,15 @@ branding:
   logo_uri: null
 
 
-
+###################################以下是Google单点登录 不想要可以删除
 upstream_oauth2:
   providers:
-    - id: 01HFVBY12TMNTYTBV8W921M5FA  # ??????? ULID,?????????? ID
+    - id: you_token  #####此处更改为你的google
       issuer: "https://accounts.google.com"
       human_name: "Google"
       brand_name: "google"
-      client_id: "452973640322-t6nreta7ja7l2n7gvik22gn3k71vdkpm.apps.googleusercontent.com"
-      client_secret: "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"
+      client_id: "452973640322-t6nreta7ja7l2n7gvik22gn3k71vdkpm.apps.googleusercontent.com"  #####此处更改为你的id
+      client_secret: "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"                                  #####此处更改为你的密钥
       token_endpoint_auth_method: "client_secret_post"  #  "client_secret_basic,client_secret_post"
       scope: "openid email profile"
       discovery_mode: "oidc"
@@ -181,6 +181,7 @@ upstream_oauth2:
           action: suggest
           template: "{{ user.email }}"
           set_email_verification: import
+######################################
 
 experimental:
   access_token_ttl: 86400
