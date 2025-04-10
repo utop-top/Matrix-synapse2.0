@@ -1,0 +1,24 @@
+  synapse-nginx:
+    image: nginx
+    container_name: synapse-nginx
+    restart: always
+    ports:
+      - "30087:8007"
+      - "4443:4443"
+    volumes:
+      - /root/Matrix/deploy-volume/snginx/config:/etc/nginx
+      - /root/Matrix/deploy-volume/snginx/well-known:/var/www
+    networks:
+      - matrix_net
+    labels:
+      - "traefik.enable=true"
+    depends_on:
+      - synapse-db
+      - synapse-redis
+      - synapse
+      - generic-worker-1
+      - media-worker
+      - federation-sender-1
+      - federation-sender-2
+      - push-worker
+      - mas

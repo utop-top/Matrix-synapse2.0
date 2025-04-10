@@ -1,0 +1,88 @@
+services:
+
+  synapse-admin:
+    container_name: synapse-admin
+    image: awesometechnologies/synapse-admin:latest
+    ports:
+      - "8111:80"
+    networks:
+      - matrix_net
+    restart: unless-stopped
+
+
+
+  element-web:
+    image: vectorim/element-web:develop
+    restart: unless-stopped
+    container_name: element-web
+    ports:
+      - 8200:80
+    healthcheck:
+      test: ["CMD-SHELL", "wget -q -O /dev/null http://localhost:80/version || exit 1"]
+      start_period: "5s"
+      interval: "15s"
+      timeout: "5s"
+    networks:
+      - matrix_net
+    volumes:
+      - ./element-web/config.json:/app/config.json
+
+  element-call:
+    image: ghcr.io/element-hq/element-call:latest-ci
+    container_name: element-call
+    ports:
+      - 7100:8080
+    volumes:
+      - ./element-call/config.json:/app/config.json
+    restart: unless-stopped
+    networks:
+      - matrix_net
+
+  lk-jwt:
+    image: ghcr.io/element-hq/lk-jwt-service:latest-ci
+    hostname: auth-server
+    container_name: lk-jwt
+    environment:
+      - LK_JWT_PORT=8080
+      - LIVEKIT_URL=wss://livekit.aosn.de:443
+    # - LIVEKIT_URL=ws://livekit:7880
+      - LIVEKIT_KEY=devkey
+      - LIVEKIT_SECRET=SOMETHING_SECRET_YOU_SHOULD_GENERATE
+      - LIVEKIT_INSECURE_SKIP_VERIFY_TLS=YES_I_KNOW_WHAT_I_AM_DOING
+    deploy:
+      restart_policy:
+        condition: on-failure
+    ports:
+      - 7111:8080
+    networks:
+      - matrix_net
+
+  livekit:
+    image: livekit/livekit-server:latest
+    command: --dev --config /etc/livekit.yaml
+    restart: unless-stopped
+    container_name: livekit
+    ports:
+      - 7880:7880/tcp
+      - 7881:7881/tcp
+      - 7882:7882/tcp
+      - 50850-50900:50850-50900/udp
+    volumes:
+      - ./element-call/livekit.yaml:/etc/livekit.yaml:Z
+    networks:
+      - matrix_net
+
+  ele-hq_redis:
+    image: redis:6-alpine
+    restart: unless-stopped
+    container_name: ele-hq_redis
+    ports:
+      - "6377:6379"
+    networks:
+      - matrix_net
+
+
+networks:
+  matrix_net:
+    external: true
+

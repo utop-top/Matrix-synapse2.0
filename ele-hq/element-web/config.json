@@ -1,0 +1,38 @@
+{
+    "default_server_config": {
+        "m.homeserver": {
+            "base_url": "https://aosn.de",
+            "server_name": "aosn.de"
+        },
+        "m.identity_server": {
+            "base_url": "https://vector.im"
+        }
+    },
+    "disable_custom_urls": true,
+    "disable_guests": false,
+    "disable_login_language_selector": false,
+    "disable_3pid_login": false,
+    "force_verification": false,
+    "brand": "Element",
+    "default_widget_container_height": 280,
+    "default_country_code": "GB",
+    "show_labs_settings": false,
+    "features": {
+        "feature_video_rooms": true,
+        "feature_group_calls": true,
+        "feature_element_call_video_rooms": true,
+        "feature_oidc_native_flow": true
+    },
+    "default_federate": true,
+    "default_theme": "dark",
+    "room_directory": {
+        "servers": ["aosn.de"]
+    },
+    "setting_defaults": {
+        "breadcrumbs": true
+    },
+    "element_call": {
+        "url": "https://call.aosn.de"
+    },
+    "map_style_url": "https://api.maptiler.com/maps/streets/style.json?key=fU3vlMsMn4Jb6dnEIFsx"
+}

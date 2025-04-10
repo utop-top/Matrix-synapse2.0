@@ -1,0 +1,10 @@
+worker_app: synapse.app.generic_worker
+worker_name: event-persister-2
+
+worker_listeners:
+  - type: http
+    port: 9034
+    resources:
+      - names: [replication]  # 用于主进程与工作者通信
+
+worker_log_config: /data/synapse.log.config

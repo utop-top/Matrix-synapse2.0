@@ -1,0 +1,33 @@
+port: 7880
+bind_addresses:
+  - "0.0.0.0"
+rtc:
+  tcp_port: 7881
+  port_range_start: 50850
+  port_range_end: 50900
+  use_external_ip: false
+turn:
+  enabled: false
+  domain: localhost
+  cert_file: ""
+  key_file: ""
+  tls_port: 5349
+  udp_port: 443
+  external_tls: true
+
+redis:
+  address: ele-hq-redis:6379
+
+keys:
+  devkey: "SOMETHING_SECRET_YOU_SHOULD_GENERATE"
+
+room:
+  enabled_codecs:
+    - mime: audio/opus
+    - mime: video/h264
+  enable_remote_unmute: true
+  playout_delay:
+    enabled: true
+    min: 100
+    max: 2000
+  sync_streams: true 

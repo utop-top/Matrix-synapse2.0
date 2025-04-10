@@ -1,0 +1,260 @@
+worker_replication_secret: "f7a9c2e5b8d341f690e3b6d24c8e9f1d"
+
+server_name: "aosn.de"
+pid_file: /data/homeserver.pid
+public_baseurl: https://aosn.de/
+suppress_key_server_warning: true
+
+presence:
+  enabled: true
+push:
+  enabled: true
+redis:
+  enabled: true
+  host: synapse-redis
+  port: 6379
+  dbid: 0
+
+listeners:
+  - port: 8008
+    tls: false
+    type: http
+    x_forwarded: true
+    resources:
+      - names: [client, federation]
+        compress: false
+  - port: 9093
+    tls: false
+    type: http
+    resources:
+      - names: [replication]
+
+database:
+  name: psycopg2
+  txn_limit: 10000
+  args:
+    user: synapse_user
+    password: your_password
+    dbname: synapse
+    host: synapse-db
+    port: 5432
+    cp_min: 5                # 最小连接数不变
+    cp_max: 25               # 降低到 100，避免连接过多耗尽资源
+#    cp_noisy: True          # 启用连接池日志，便于调试
+#    connect_timeout: 10
+
+#########################################################
+start_pushers: false
+send_federation: false
+enable_media_repo: false
+
+#  enable_typing_writer: false
+#update_user_directory_from_worker: event-persister-1
+#media_instance_running_background_jobs: media-worker
+workers:
+  federation_sender_instances: 
+    - federation-sender-1
+    - federation-sender-2
+    - federation-sender-3
+#    - federation_sender_4
+#    - federation_sender_5
+#    - federation_sender_6
+  pusher_instances:
+    - push-worker
+  generic_worker_instances:
+    - generic-worker-1
+    - generic-worker-2
+    - generic-worker-3
+  media_repository_instances:
+    - media-worker
+#outbound_federation_restricted_to:
+#  - federation-sender-1
+#  - federation-sender-2
+#  - federation-sender-3
+
+instance_map:
+  main:
+    host: 'synapse'
+    port: 9093
+  generic-worker-1:
+    host: generic-worker-1
+    port: 9001
+  generic-worker-2:
+    host: generic-worker-2
+    port: 9011
+  generic-worker-3:
+    host: generic-worker-3
+    port: 9012
+  media-worker:
+    host: media-worker
+    port: 9002
+  push-worker:
+    host: push-worker
+    port: 9004
+  event-persister-1:
+    host: event-persister-1
+    port: 9033
+  event-persister-2:
+    host: event-persister-2
+    port: 9034
+
+
+
+#stream_writers:
+#  events: 
+#    - generic-worker-1
+#    - generic-worker-2
+#  typing: 
+#    - event-persister-1
+#  receipts:
+#    - event-persister-2
+#  account_data:
+#    - event-persister-3
+#  to_device:
+#    - event-persister-4
+#  presence:
+#    - event-persister-5
+
+
+#消息缓存策略
+#####################################################################
+state:
+  max_event_delay_duration: 24h
+room_version:
+  partial_state:
+    enabled: true
+    max_room_size: 50000
+
+caches:
+  event_cache_size: 200K  # 改为 100,000 个事件，减少内存占用
+  global_factor: 3      # 降低全局因子，避免过度放大缓存
+  stateGroup*: 2          # 状态组因子设为 2，适中支持大型房间
+  expire_caches: true     # 保持启用
+  cache_entry_ttl: 12h     # 缩短至 4 小时，释放旧数据
+  sync_response_cache_duration: 2m  # 缩短至 1 分钟，减少内存占用
+  per_cache_factors:
+    get_current_hosts_in_room: 2
+    get_local_users_in_room: 2
+    get_partial_current_state_ids: 2.0  # 提升至 1.0，优化状态同步
+    _get_presence_for_user: 2
+    get_rooms_for_user: 2
+    _get_server_keys_json: 2
+    stateGroupCache: 4.0      # 提升至 1.0，加快状态组查询
+    stateGroupMembersCache: 4.0  # 提升至 1.0，优化成员数据
+  cache_autotuning:
+    max_cache_memory_usage: 6G    # 增加至 2 GB，充分利用内存
+    target_cache_memory_usage: 4G  # 目标 1.5 GB，留些余量
+    min_cache_ttl: 60s            # 缩短至 15 秒，快速刷新
+
+federation:
+  federation_enabled: true
+  federation_client_minimum_cache_size: 200    # 减小最小缓存，降低内存压力
+  federation_client_cache_size: 100000          # 减至 50,000，适中规模
+  federation_rc_window_size: 200000             # 减至 10,000，减少同步负担
+  federation_rc_sleep_limit: 30                # 减至 20，降低队列压力
+  federation_rc_sleep_delay: 300               # 增至 500 ms，平滑请求
+  federation_rc_reject_limit: 500              # 减至 200，减少拒绝开销
+  federation_rc_concurrent: 40                 # 减至 50，匹配 4 核心 CPU
+  federation_rc_timeout: 30000                 # 减至 30 秒，避免长时间等待
+
+#############################################################################
+allow_profile_lookup_over_federation: false  #禁用通过联邦查找个人资料
+#federation_domain_whitelist:
+#  - matrix.envs.net
+#  - envs.net
+#  - ms.aosn.de
+#  - matrix.org
+
+
+
+retention:
+  enabled: true
+  default_policy:
+    min_lifetime: 1m      # 至少保留 1 小时
+    max_lifetime: 180d      # 最多保留 3 小时
+  allowed_lifetime_min: 1m   #房间管理员最小保存
+  allowed_lifetime_max: 180d
+  purge_jobs:
+    - longest_max_lifetime: 180d  # 删除超过 3 小时的消息
+      interval: 12h              # 每小时检查一次
+  default_action: "delete"      # 删除超期消息
+##############################################################################
+
+log_config: "/data/synapse.log.config"
+media_store_path: /data/media_store
+registration_shared_secret: "hCM^WP+tiLynuW-ImCi^KM_Xn_5g@yRIOJgXLWOZO#CGcd:hao"
+report_stats: false
+macaroon_secret_key: "&nsg-@hVVEAH_tBRwo3KaN6y*OtdrP4w;4GtCc#fhu_Vo;yUKQ"
+form_secret: "G&@cPi8gu_9evTkwc~vo*Pgl,sd7gALXqX&#O2x0BMuwN10tei"
+signing_key_path: "/data/synapse.signing.key"
+trusted_key_servers:
+  - server_name: "matrix.org"
+
+#############################################################################
+media_repository:
+  enable_media_repo: true
+  max_event_delay_duration: 24h
+  max_pending_media_uploads: 100
+  max_spider_size: "10M"
+  max_upload_size: 1024M
+  max_image_size: 50M
+  max_thumbnail_generators: 20
+#message_retention:
+#  default: "delete"
+
+background_updates:
+    sleep_enabled: false
+
+
+#////////////////////////历史消息清除计时
+#retention:
+#  enabled: true
+#  default_policy:
+#    min_lifetime: 7d
+#    max_lifetime: 180d
+#  allowed_lifetime_min: 7d  #优先级更高
+#  allowed_lifetime_max: 180d
+#  purge_jobs:
+#    - longest_max_lifetime: 30d
+#      interval: 12h
+#    - shortest_max_lifetime: 30d
+#      interval: 12h
+
+#####################################################
+experimental_features:
+  experimental_federation:
+    enabled: true
+  experimental_encryption:
+    enabled: true
+  MSC2655_enabled: true
+  msc3266_enabled: true
+
+  # especially Element Call
+  msc4222_enabled: true
+
+  msc3030_enabled: true
+
+  msc4108_enabled: true
+
+  msc3861: # OIDC
+    enabled: true
+    issuer: https://auth.aosn.de
+    client_id: 0000000000000000000SYNAPSE
+    client_auth_method: client_secret_basic
+    client_secret: 'kMKhpWW5evSedXz1t8bSlw'
+    admin_token: 'n2vHYeTYrGMPY0d96Nh0ALEuu5nqBZ4y'
+    account_management_url: "https://auth.aosn.de/account"
+
+########################################################
+#enable_registration: true  #以允许用户注册
+#enable_registration_without_verification: true
+suppress_key_server_warning: true
+
+#
+trusted_key_servers:
+  - server_name: "matrix.org"
+app_service_config_files:
+  - data/registration.yaml
+
+
+# vim:ft=yaml

@@ -1,0 +1,10 @@
+# push_worker.yaml
+
+worker_app: synapse.app.pusher
+worker_name: push-worker
+worker_log_config: /data/synapse.log.config
+
+instance_map:
+  main:
+    host: 'synapse'
+    port: 9004
