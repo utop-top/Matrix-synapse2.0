@@ -9,7 +9,7 @@ services:
       - "8008:8008"
       - "8448:8448"
     volumes:
-      - /root/Matrix/deploy-volume/Synapse/synapse:/data:rw 
+      - ./Synapse/synapse:/data:rw 
     environment:
       - SYNAPSE_CONFIG_DIR=/data
       - SYNAPSE_CONFIG_PATH=/data/homeserver.yaml
@@ -49,8 +49,8 @@ services:
       - POSTGRES_PASSWORD=your_password
       - POSTGRES_INITDB_ARGS=--encoding=UTF8 --locale=C
     volumes:
-      - /root/Matrix/deploy-volume/Synapse/synapse_db:/var/lib/postgresql/data:rw 
-      - /root/Matrix/deploy-volume/Synapse/synapse_db_conf/postgresql.conf:/etc/postgresql/postgresql.conf
+      - ./Synapse/synapse_db:/var/lib/postgresql/data:rw 
+      - ./Synapse/synapse_db_conf/postgresql.conf:/etc/postgresql/postgresql.conf
     command: postgres -c 'config_file=/etc/postgresql/postgresql.conf'
     ports:
       - "5412:5432"
@@ -72,7 +72,7 @@ services:
     networks:
       - matrix_net
     volumes:
-      - /root/Matrix/deploy-volume/Synapse/synapse:/data:rw 
+      - ./Synapse/synapse:/data:rw 
     environment:
       SYNAPSE_WORKER: synapse.app.generic_worker
     ports:
@@ -97,7 +97,7 @@ services:
     networks:
       - matrix_net
     volumes:
-      - /root/Matrix/deploy-volume/Synapse/synapse:/data:rw 
+      - ./Synapse/synapse:/data:rw 
     environment:
       SYNAPSE_WORKER: synapse.app.generic_worker
     ports:
@@ -121,7 +121,7 @@ services:
     networks:
       - matrix_net
     volumes:
-      - /root/Matrix/deploy-volume/Synapse/synapse:/data:rw 
+      - ./Synapse/synapse:/data:rw 
     environment:
       SYNAPSE_WORKER: synapse.app.generic_worker
     ports:
@@ -145,7 +145,7 @@ services:
     networks:
       - matrix_net
     volumes:
-      - /root/Matrix/deploy-volume/Synapse/synapse:/data:rw 
+      - ./Synapse/synapse:/data:rw 
     environment:
       SYNAPSE_WORKER: synapse.app.generic_worker
     ports:
@@ -169,7 +169,7 @@ services:
     networks:
       - matrix_net
     volumes:
-      - /root/Matrix/deploy-volume/Synapse/synapse:/data:rw 
+      - ./Synapse/synapse:/data:rw 
     environment:
       SYNAPSE_WORKER: synapse.app.generic_worker
     ports:
@@ -193,7 +193,7 @@ services:
     networks:
       - matrix_net
     volumes:
-      - /root/Matrix/deploy-volume/Synapse/synapse:/data:rw 
+      - ./Synapse/synapse:/data:rw 
     environment:
       SYNAPSE_WORKER: synapse.app.generic_worker
     ports:
@@ -218,7 +218,7 @@ services:
     networks:
       - matrix_net
     volumes:
-      - /root/Matrix/deploy-volume/Synapse/synapse:/data:rw 
+      - ./Synapse/synapse:/data:rw 
     environment:
       SYNAPSE_WORKER: synapse.app.generic_worker
     ports:
@@ -242,7 +242,7 @@ services:
     networks:
       - matrix_net
     volumes:
-      - /root/Matrix/deploy-volume/Synapse/synapse:/data:rw 
+      - ./Synapse/synapse:/data:rw 
     environment:
       SYNAPSE_WORKER: synapse.app.generic_worker
     ports:
@@ -267,7 +267,7 @@ services:
     networks:
       - matrix_net
     volumes:
-      - /root/Matrix/deploy-volume/Synapse/synapse:/data:rw
+      - ./Synapse/synapse:/data:rw
     environment:
       - SYNAPSE_WORKER=synapse.app.media_repository
     ports:
@@ -290,7 +290,7 @@ services:
     networks:
       - matrix_net
     volumes:
-      - /root/Matrix/deploy-volume/Synapse/synapse:/data:rw 
+      - ./Synapse/synapse:/data:rw 
     ports:
       - 9003:9003
     environment:
@@ -312,7 +312,7 @@ services:
     networks:
       - matrix_net
     volumes:
-      - /root/Matrix/deploy-volume/Synapse/synapse:/data:rw 
+      - ./Synapse/synapse:/data:rw 
     ports:
       - 9006:9006
     environment:
@@ -334,7 +334,7 @@ services:
     networks:
       - matrix_net
     volumes:
-      - /root/Matrix/deploy-volume/Synapse/synapse:/data:rw
+      - ./Synapse/synapse:/data:rw
     ports:
       - 9066:9066 
     environment:
@@ -351,7 +351,7 @@ services:
     restart: unless-stopped
     entrypoint: ["/start.py", "run", "--config-path=/data/homeserver.yaml", "--config-path=/data/workers/push_worker.yaml"]
     volumes:
-      - /root/Matrix/deploy-volume/Synapse/synapse:/data:rw
+      - ./Synapse/synapse:/data:rw
     environment:
       - SYNAPSE_WORKER=synapse.app.pusher
     ports:
@@ -374,7 +374,7 @@ services:
     ports:
       - 8100:8080
     volumes:
-      - /root/Matrix/deploy-volume/Synapse/mas:/data:rw
+      - ./Synapse/mas_config:/data:rw
     networks:
       - matrix_net
     # FIXME: do we also need to sync the db?
@@ -394,7 +394,7 @@ services:
       - POSTGRES_PASSWORD=your_password  
       - POSTGRES_INITDB_ARGS=--encoding=UTF8 --locale=C
     volumes:
-      - /root/Matrix/deploy-volume/Synapse/mas/mas_db:/var/lib/postgresql/data  
+      - ./mas_db:/var/lib/postgresql/data  
     ports:
       - "5422:5432"  
     networks:
