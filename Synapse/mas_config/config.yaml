@@ -110,7 +110,7 @@ passwords:
   minimum_complexity: 3
 matrix:
   homeserver: example.com     #  ##此处更改为你的synapse服务域名
-  secret: 'n2vHYeTYrGMPY0d96Nh0ALEuu5nqBZ4y'
+  secret: 'n2vHYeTYrGMPY0d96Nh0ALEuu5nqBZ4y'     #  此处更改为你的可以随机生成token 注意与home文件中配置相同
   endpoint: https://example.com/       #  ##此处更改为你的synapse服务域名     
 
 # please keep config above this point as close as possible to the original generated config
