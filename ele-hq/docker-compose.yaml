@@ -44,8 +44,8 @@ services:
     container_name: lk-jwt
     environment:
       - LK_JWT_PORT=8080
-      - LIVEKIT_URL=wss://livekit.aosn.de:443
-    # - LIVEKIT_URL=ws://livekit:7880
+    #  - LIVEKIT_URL=wss://livekit.example.com:443
+      - LIVEKIT_URL=ws://livekit:7880
       - LIVEKIT_KEY=devkey
       - LIVEKIT_SECRET=SOMETHING_SECRET_YOU_SHOULD_GENERATE
       - LIVEKIT_INSECURE_SKIP_VERIFY_TLS=YES_I_KNOW_WHAT_I_AM_DOING
