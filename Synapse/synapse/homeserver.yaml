@@ -1,8 +1,8 @@
 worker_replication_secret: "f7a9c2e5b8d341f690e3b6d24c8e9f1d"
 
-server_name: "aosn.de"
+server_name: "example.com"
 pid_file: /data/homeserver.pid
-public_baseurl: https://aosn.de/
+public_baseurl: https://example.com/
 suppress_key_server_warning: true
 
 presence:
@@ -238,12 +238,12 @@ experimental_features:
 
   msc3861: # OIDC
     enabled: true
-    issuer: https://auth.aosn.de
-    client_id: 0000000000000000000SYNAPSE
-    client_auth_method: client_secret_basic
-    client_secret: 'kMKhpWW5evSedXz1t8bSlw'
-    admin_token: 'n2vHYeTYrGMPY0d96Nh0ALEuu5nqBZ4y'
-    account_management_url: "https://auth.aosn.de/account"
+    issuer: https://auth.example.com    ####此处更改为你的mas配置
+    client_id: 000000000007777SYNAPSE     ###此处更改为你的mas配置要与之相同
+    client_auth_method: client_secret_basic      ##此处更改为你的mas配置要与之相同
+    client_secret: 'kMKhpWW5evSedXz1t8bSlw'        ##此处更改为你的mas配置要与之相同
+    admin_token: 'n2vHYeTYrGMPY0d96Nh0ALEuu5nqBZ4y'    ##此处更改为你的mas配置要与之相同
+    account_management_url: "https://auth.example.com/account"    ##此处更改为你的mas配置要与之相同
 
 ########################################################
 #enable_registration: true  #以允许用户注册
