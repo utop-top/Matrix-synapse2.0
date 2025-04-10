@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # 定义变量
-EMAIL="looksend@outlook.com"      # 用于接收证书到期提醒的邮箱
+EMAIL="email888@outlook.com"      # 用于接收证书到期提醒的邮箱
 CERT_PATH="/root/Certs/Certbot"   # 证书存储路径
 WEBROOT_PATH="/var/www/certbot"   # Webroot 目录
 NGINX_PORT=80                     # 临时 Nginx 监听端口
