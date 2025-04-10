@@ -1,15 +1,15 @@
 {
   "default_server_config":{
     "m.homeserver":{
-      "base_url":"https://aosn.de",
-      "server_name":"aosn.de"
+      "base_url":"https://example.com",
+      "server_name":"example.com"
     }
   },
   "livekit": {
-    "livekit_service_url":"https://jwt.aosn.de"
+    "livekit_service_url":"https://jwt.example.com"
   },
   "element_call": {
-     "url": "https://call.aosn.de",
+     "url": "https://call.example.com",
      "participant_limit": 8,
      "brand": "Element Call",
      "use_exclusively": true
