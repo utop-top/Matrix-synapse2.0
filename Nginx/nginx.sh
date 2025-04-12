@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # 定义证书相关变量
-EMAIL="looksend@outlook.com"      # 用于接收证书到期提醒的邮箱
+EMAIL="666666888888@outlook.com"      # 用于接收证书到期提醒的邮箱
 CERT_PATH="/root/Nginx/Certbot"   # 证书存储路径
 WEBROOT_PATH="/var/www/certbot"   # Webroot 目录
 NGINX_PORT=80                     # 临时 Nginx 监听端口
@@ -388,8 +388,8 @@ server {
     server_name $DOMAIN;
     server_tokens off;
 
-    ssl_certificate /etc/nginx/ssl/live/$DOMAIN/fullchain1.pem;
-    ssl_certificate_key /etc/nginx/ssl/live/$DOMAIN/privkey1.pem;
+    ssl_certificate /etc/nginx/ssl/live/$DOMAIN/fullchain.pem;
+    ssl_certificate_key /etc/nginx/ssl/live/$DOMAIN/privkey.pem;
     charset utf-8;
 
     location / {
