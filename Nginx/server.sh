@@ -55,8 +55,8 @@ server {
     server_name $DOMAIN;
     server_tokens off;
 
-    ssl_certificate /etc/nginx/ssl/live/$DOMAIN/fullchain1.pem;
-    ssl_certificate_key /etc/nginx/ssl/live/$DOMAIN/privkey1.pem;
+    ssl_certificate /etc/nginx/ssl/live/$DOMAIN/fullchain.pem;
+    ssl_certificate_key /etc/nginx/ssl/live/$DOMAIN/privkey.pem;
     charset utf-8;
 
     location / {
