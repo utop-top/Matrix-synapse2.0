@@ -1,0 +1,1327 @@
+### conduwuit 配置
+###
+### 此文件是自动生成的。存储库中的更改/贡献将被覆盖！
+###
+### 在配置服务器之前，您应该重命名此文件。文档和默认值的更改可以在源代码的 src/core/config/mod.rs 中进行贡献。此文件在构建时生成。
+###
+### 预填充的任何值都是该配置选项的默认值。
+###
+### 至少，您必须编辑所有标记为“您需要编辑此项”的配置选项以适应您的环境。
+###
+### 更多信息，请参见：
+### https://conduwuit.puppyirl.gay/configuration.html
+
+[global]
+
+# server_name 是此服务器的友好名称。它用作用户和房间 ID/别名的后缀。
+#
+# 有关反向代理和委托的文档，请参见：
+# https://conduwuit.puppyirl.gay/deploying/generic.html#setting-up-the-reverse-proxy
+#
+# 另请参见文件底部的 `[global.well_known]` 配置部分。
+#
+# 委托示例：
+# - https://puppygock.gay/.well-known/matrix/server
+# - https://puppygock.gay/.well-known/matrix/client
+#
+# 您需要编辑此项。更改后无法在不擦除数据库的情况下更改。
+#
+# 示例: "conduwuit.woof"
+#
+#server_name =
+
+# conduwuit 将监听的默认地址（IPv4 或 IPv6）。
+#
+# 如果您使用 Docker 或容器 NAT 网络设置，此项必须为 "0.0.0.0"。
+#
+# 要监听多个地址，请指定一个向量，例如 ["127.0.0.1", "::1"]
+#
+#address = ["127.0.0.1", "::1"]
+
+# conduwuit 将监听的端口。
+#
+# 有关反向代理的设置，请参见：
+# https://conduwuit.puppyirl.gay/deploying/generic.html#setting-up-the-reverse-proxy
+#
+# 如果您使用 Docker，请勿更改此项，您需要将外部端口映射到此端口。
+#
+# 要监听多个端口，请指定一个向量，例如 [8080, 8448]
+#
+#port = 8008
+
+# conduwuit 将监听的 UNIX 套接字。
+#
+# conduwuit 不能同时监听 IP 地址和 UNIX 套接字。如果监听 UNIX 套接字，您必须删除/注释 `address` 键。
+#
+# 请确保您的反向代理可以访问此套接字文件，可以将反向代理添加到 'conduwuit' 组或使用 `unix_socket_perms` 授予全局 R/W 权限（至少 666）。
+#
+# 示例: "/run/conduwuit/conduwuit.sock"
+#
+#unix_socket_path =
+
+# 创建 UNIX 套接字的默认权限（八进制）。
+#
+#unix_socket_perms = 660
+
+# 这是 conduwuit 保存其数据（包括媒体）的唯一目录。注意：这以前是 "/var/lib/matrix-conduit"。
+#
+# 您需要编辑此项。
+#
+# 示例: "/var/lib/conduwuit"
+#
+#database_path =
+
+# conduwuit 支持使用 RocksDB 的备份引擎 API 进行在线数据库备份。要使用此功能，请设置一个 conduwuit 可以写入的数据库备份路径。
+#
+# 更多信息，请参见：
+# https://conduwuit.puppyirl.gay/maintenance.html#backups
+#
+# 示例: "/opt/conduwuit-db-backups"
+#
+#database_backup_path =
+
+# 如果使用 "database_backup_path"，在删除最旧的备份之前，保留的在线 RocksDB 数据库备份数量。
+#
+#database_backups_to_keep = 1
+
+# 在用户注册时添加到用户显示名称末尾的文本，前面有一个空格。在 Conduit 中，这是一个闪电表情。
+#
+# 要禁用，请将此项设置为空字符串 ""。
+#
+# 默认值为跨性别自豪旗帜。
+#
+# 示例: "🏳️‍⚧️"
+#
+#new_user_displayname_suffix = "🏳️‍⚧️"
+
+# 如果启用，conduwuit 将定期向 `https://pupbrain.dev/check-for-updates/stable` 发送一个简单的 GET 请求，以获取任何新公告。尽管名称如此，这不是一个更新检查端点，而是一个公告检查端点。
+#
+# 默认禁用，因为这很少使用，除非是安全更新或重大更新。
+#
+#allow_check_for_updates = false
+
+# 将此项设置为任意浮点值，以乘以 conduwuit 的内存 LRU 缓存，例如 "auth_chain_cache_capacity"。
+#
+# 如果您有多余的内存，可以增加此值以提高性能。
+#
+# 如果内存不足，减小此值可能会有所帮助。
+#
+# 默认情况下，单个缓存（如 "auth_chain_cache_capacity"）会根据您的 CPU 核心数进行缩放。
+#
+#cache_capacity_modifier = 1.0
+
+# 将此项设置为任意浮点值（单位为兆字节），以告知数据库引擎可用于数据库读取缓存的内存量。
+#
+# 如果您有多余的内存，可以增加此值以提高性能。
+#
+# 与单个 LRU 缓存类似，此值会根据您的 CPU 核心数进行缩放。
+#
+# 默认为 128.0 + (64.0 * CPU 核心数)。
+#
+#db_cache_capacity_mb = 随系统变化
+
+# 将此项设置为任意浮点值（单位为兆字节），以告知数据库引擎可用于数据库写入缓存的内存量。
+#
+# 如果您有多余的内存，可以增加此值以提高性能。
+#
+# 与单个 LRU 缓存类似，此值会根据您的 CPU 核心数进行缩放。
+#
+# 默认为 48.0 + (4.0 * CPU 核心数)。
+#
+#db_write_buffer_capacity_mb = 随系统变化
+
+# 此项未文档化。请为其贡献文档。
+#
+#pdu_cache_capacity = 随系统变化
+
+# 此项未文档化。请为其贡献文档。
+#
+#auth_chain_cache_capacity = 随系统变化
+
+# 此项未文档化。请为其贡献文档。
+#
+#shorteventid_cache_capacity = 随系统变化
+
+# 此项未文档化。请为其贡献文档。
+#
+#eventidshort_cache_capacity = 随系统变化
+
+# 此项未文档化。请为其贡献文档。
+#
+#eventid_pdu_cache_capacity = 随系统变化
+
+# 此项未文档化。请为其贡献文档。
+#
+#shortstatekey_cache_capacity = 随系统变化
+
+# 此项未文档化。请为其贡献文档。
+#
+#statekeyshort_cache_capacity = 随系统变化
+
+# 此项未文档化。请为其贡献文档。
+#
+#servernameevent_data_cache_capacity = 随系统变化
+
+# 此项未文档化。请为其贡献文档。
+#
+#stateinfo_cache_capacity = 随系统变化
+
+# 此项未文档化。请为其贡献文档。
+#
+#roomid_spacehierarchy_cache_capacity = 随系统变化
+
+# DNS 内存缓存中存储的最大条目数。条目大小可能不同，因此请谨慎提高此值。仅在使用外部 DNS 缓存时减小此值。请注意，systemd-resolved 即使配置为外部缓存，也不算作外部缓存。
+#
+#dns_cache_entries = 32768
+
+# DNS 缓存中条目的最小生存时间（秒）。默认值对大多数管理员来说可能较高；这是设计使然，因为大多数 NXDOMAIN 长期正确（例如，服务器不再运行 Matrix）。仅在使用外部 DNS 缓存时减小此值。
+#
+#dns_min_ttl = 10800
+
+# DNS 缓存中 NXDOMAIN 条目的最小生存时间（秒）。此值对于服务器高效联合至关重要。NXDOMAIN 被假定为不会返回联合，并被积极缓存而不是不断重新检查。
+#
+# 默认为 3 天，因为这些很少是误报。
+#
+#dns_min_ttl_nxdomain = 259200
+
+# DNS 名称服务器在超时或错误后的重试次数。
+#
+#dns_attempts = 10
+
+# 等待 DNS 查询回复的秒数。请注意，某些域的递归查询可能需要几秒钟，因此此值不应太低，特别是在较慢的硬件或解析器上。
+#
+#dns_timeout = 10
+
+# 在 DNS 错误时回退到 TCP。如果名称服务器不支持，请设置为 false。
+#
+#dns_tcp_fallback = true
+
+# 启用以查询所有名称服务器直到找到域。在 hickory_resolver 中称为 "trust_negative_responses"。如果第一个名称服务器响应 NXDOMAIN 或空的 NOERROR 响应，这可以避免无用的 DNS 查询。
+#
+#query_all_nameservers = true
+
+# 启用以仅使用 TCP 查询您指定的名称服务器，而不是 UDP。
+#
+# 如果您在容器环境中运行 conduwuit，可能需要启用此配置选项。更多详情，请参见：
+# https://conduwuit.puppyirl.gay/troubleshooting.html#potential-dns-issues-when-using-docker
+#
+#query_over_tcp_only = false
+
+# DNS A/AAAA 记录查找策略
+#
+# 接受以下选项之一的数字：
+# 1 - Ipv4Only（仅查询 A 记录，不查询 AAAA/IPv6）
+#
+# 2 - Ipv6Only（仅查询 AAAA 记录，不查询 A/IPv4）
+#
+# 3 - Ipv4AndIpv6（并行查询 A 和 AAAA 记录，使用先返回成功响应的记录）
+#
+# 4 - Ipv6thenIpv4（查询 AAAA 记录，如果失败则查询 A 记录）
+#
+# 5 - Ipv4thenIpv6（查询 A 记录，如果失败则查询 AAAA 记录）
+#
+# 如果您没有 IPv6 网络，为了更好的 DNS 性能，可以将此项设置为 Ipv4Only (1)，因为您永远不会使用 AAAA 记录内容，即使 AAAA 记录成功而不是 A 记录。
+#
+#ip_lookup_strategy = 5
+
+# 文件上传的最大请求大小（字节）。默认为 20MB。
+#
+#max_request_size = 20971520
+
+# 此项未文档化。请为其贡献文档。
+#
+#max_fetch_prev_events = 192
+
+# 默认/基础连接超时（秒）。仅用于 URL 预览和更新/新闻端点检查。
+#
+#request_conn_timeout = 10
+
+# 默认/基础请求超时（秒）。等待从另一服务器接收更多数据的时间。仅用于 URL 预览、更新/新闻和杂项端点检查。
+#
+#request_timeout = 35
+
+# 默认/基础请求总超时（秒）。整个请求的时间限制。设置为非常高以避免取消健康请求，同时作为后备。仅用于 URL 预览和更新/新闻端点检查。
+#
+#request_total_timeout = 320
+
+# 默认/基础空闲连接池超时（秒）。仅用于 URL 预览和更新/新闻端点检查。
+#
+#request_idle_timeout = 5
+
+# 默认/基础每主机最大空闲连接数。仅用于 URL 预览和更新/新闻端点检查。默认为 1，因为通常可以重用相同的开放连接。
+#
+#request_idle_per_host = 1
+
+# 联合 well-known 解析连接超时（秒）。
+#
+#well_known_conn_timeout = 6
+
+# 联合 HTTP well-known 解析请求超时（秒）。
+#
+#well_known_timeout = 10
+
+# 联合客户端请求超时（秒）。您绝对希望此值较高，以应对极大型房间的加入、缓慢的 homeserver 和您自己的资源等。
+#
+#federation_timeout = 300
+
+# 联合客户端空闲连接池超时（秒）。
+#
+#federation_idle_timeout = 25
+
+# 联合客户端每主机最大空闲连接数。默认为 1，因为通常可以重用相同的开放连接。
+#
+#federation_idle_per_host = 1
+
+# 联合发送者请求超时（秒）。远程服务器处理发送事务的时间可能较长。
+#
+#sender_timeout = 180
+
+# 联合发送者空闲连接池超时（秒）。
+#
+#sender_idle_timeout = 180
+
+# 联合发送者事务重试退避限制（秒）。
+#
+#sender_retry_backoff_limit = 86400
+
+# 应用服务 URL 请求连接超时。默认为 35 秒，因为应用服务通常托管在同一网络内。
+#
+#appservice_timeout = 35
+
+# 应用服务 URL 空闲连接池超时（秒）。
+#
+#appservice_idle_timeout = 300
+
+# 通知网关推送器空闲连接池超时。
+#
+#pusher_idle_timeout = 15
+
+# 从客户端接收请求的最大时间（秒）。
+#
+#client_receive_timeout = 75
+
+# 处理从客户端接收的请求的最大时间（秒）。
+#
+#client_request_timeout = 180
+
+# 向客户端传输响应的最大时间（秒）
+#
+#client_response_timeout = 120
+
+# 客户端请求的干净关闭宽限期（秒）。
+#
+#client_shutdown_timeout = 10
+
+# 联合请求的干净关闭宽限期（秒）。
+#
+#sender_shutdown_timeout = 5
+
+# 启用注册。如果设置为 false，则在此服务器上无法注册用户。
+#
+# 如果在未配置令牌的情况下设置为 true，则用户可以在不进行第二步验证的情况下注册，但您必须将以下选项设置为 true：
+# `yes_i_am_very_very_sure_i_want_an_open_registration_server_prone_to_abuse`
+#
+# 如果您希望仅通过令牌注册，请配置 `registration_token` 或 `registration_token_file`。
+#
+#allow_registration = false
+
+# 启用此设置将开放注册给任何人，无任何限制。
+# 这会使您的服务器容易受到滥用
+#
+#yes_i_am_very_very_sure_i_want_an_open_registration_server_prone_to_abuse = false
+
+# 新用户在创建账户时必须提供的静态注册令牌。如果未设置且 `allow_registration` 为 true，
+# 您必须将 `yes_i_am_very_very_sure_i_want_an_open_registration_server_prone_to_abuse` 设置为 true 以允许无条件的开放注册。
+#
+# 您需要编辑此项或使用 registration_token_file。
+#
+# 示例: "o&^uCtes4HPf0Vu@F20jQeeWE7"
+#
+#registration_token =
+
+# 系统上用于读取额外注册令牌的文件路径。多个令牌可以用空格分隔。
+#
+# conduwuit 必须能够访问该文件，并且该文件不能为空。
+#
+# 示例: "/etc/conduwuit/.reg_token"
+#
+#registration_token_file =
+
+# 控制是否允许加密房间和事件。
+#
+#allow_encryption = true
+
+# 控制是否允许联合。建议不要在事后禁用此项，因为可能会导致联合中断。
+#
+#allow_federation = true
+
+# 允许向自己发送联合请求
+#
+# 这不是预期的行为，如果联合请求被发送给自己，很可能是 bug。目前主要用于开发目的。
+#
+#federation_loopback = false
+
+# 如果用户离开房间，始终代表用户调用 /forget。这是 MSC4267 “离开时自动忘记房间”的一部分
+#
+#forget_forced_upon_leave = false
+
+# 将此项设置为 true 以要求在通常未经身份验证的配置文件检索端点（GET）"/_matrix/client/v3/profile/{userId}" 上进行身份验证。
+#
+# 这可以防止配置文件抓取。
+#
+#require_auth_for_profile_requests = false
+
+# 将此项设置为 true 以允许您的服务器的公共房间目录被联合。将其设置为 false 以防止 /publicRooms 爬虫，
+# 但会禁止外部用户查看您的服务器的公共房间目录。如果完全禁用联合 (`allow_federation`)，则此项隐含为 false。
+#
+#allow_public_room_directory_over_federation = false
+
+# 将此项设置为 true 以允许通过客户端 API 未经客户端身份验证（访问令牌）查询您的服务器的公共房间目录。将其设置为 false 以防止 /publicRooms 爬虫。
+#
+#allow_public_room_directory_without_auth = false
+
+# 允许访客/未经身份验证的用户访问 TURN 凭证。
+#
+# 这等同于 Synapse 的 `turn_allow_guests` 配置选项。这允许任何未经身份验证的用户调用端点 `/_matrix/client/v3/voip/turnServer`。
+#
+# 您不太可能需要启用此项，因为所有主要客户端都支持对此端点的身份验证，并可防止潜在的机器人滥用您的 TURN 服务器。
+#
+#turn_allow_guests = false
+
+# 将此项设置为 true 以锁定您的服务器的公共房间目录，仅允许管理员将房间发布到房间目录。启用此项后，所有用户仍可取消发布。
+#
+#lockdown_public_room_directory = false
+
+# 将此项设置为 true 以允许联合设备显示名称 / 允许外部用户查看您的设备显示名称。如果完全禁用联合 (`allow_federation`)，则此项隐含为 false。出于隐私原因，最好保持禁用。
+#
+#allow_device_name_federation = false
+
+# 配置选项，允许或禁止传入的联合请求从 `/_matrix/federation/v1/query/profile` 获取本地用户的配置文件。
+#
+# 提高本地用户的隐私，例如显示名称，但某些远程用户在尝试邀请您进入 DM 或房间时可能会收到错误的“此用户不存在”错误。还可以防止配置文件爬虫。
+#
+# 如果 `allow_federation` 禁用，则此项隐含为 false
+#
+#allow_inbound_profile_lookup_federation_requests = true
+
+# 允许标准用户创建房间。应用服务和管理员始终允许创建房间
+#
+#allow_room_creation = true
+
+# 设置为 false 以禁止用户加入或创建 conduwuit 官方不支持的房间版本。
+#
+# conduwuit 官方支持房间版本 6 - 11。
+#
+# conduwuit 对版本 3 - 5 有轻微的实验性支持（但在实践中运行良好）。
+#
+#allow_unstable_room_versions = true
+
+# conduwuit 创建房间时使用的默认房间版本。
+#
+# 根据规范，房间版本 11 是默认版本。
+#
+#default_room_version = 11
+
+# 此项未文档化。请为其贡献文档。
+#
+#allow_jaeger = false
+
+# 此项未文档化。请为其贡献文档。
+#
+#jaeger_filter = "info"
+
+# 如果启用了 'perf_measurements' 编译时功能，则启用使用 tracing_flame 收集 tracing spans 的折叠堆栈跟踪配置文件。生成的配置文件可以使用 inferno[1]、speedscope[2] 或其他工具进行可视化。
+#
+# [1]: https://github.com/jonhoo/inferno
+# [2]: www.speedscope.app
+#
+#tracing_flame = false
+
+# 此项未文档化。请为其贡献文档。
+#
+#tracing_flame_filter = "info"
+
+# 此项未文档化。请为其贡献文档。
+#
+#tracing_flame_output_path = "./tracing.folded"
+
+# 示例：
+#
+# - 无代理（默认）：
+#
+#       proxy = "none"
+#
+# - 对于全局代理，在此文件底部创建部分：
+#
+#       [global.proxy]
+#       global = { url = "socks5h://localhost:9050" }
+#
+# - 代理某些域：
+#
+#       [global.proxy]
+#       [[global.proxy.by_domain]]
+#       url = "socks5h://localhost:9050"
+#       include = ["*.onion", "matrix.myspecial.onion"]
+#       exclude = ["*.myspecial.onion"]
+#
+# Include vs. Exclude：
+#
+# - 如果 include 为空列表，则假定为 `["*"]`。
+#
+# - 如果一个域同时匹配 exclude 和 include 列表，则仅当因更具体的规则被包含时才使用代理。在上述示例中，代理将用于 `ordinary.onion`、`matrix.myspecial.onion`，但不用于 `hello.myspecial.onion`。
+#
+#proxy = "none"
+
+# 此处列出的服务器将用于收集其他服务器的公钥（公证可信密钥服务器）。
+#
+# 目前，conduwuit 不支持传入的批量密钥请求，因此此列表应仅包含其他 Synapse 服务器。
+#
+# 示例: ["matrix.org", "tchncs.de"]
+#
+#trusted_servers = ["matrix.org"]
+
+# 是否先查询 trusted_servers 中列出的服务器还是先查询源服务器。为了最佳安全性，建议先查询源服务器，以最小化对受损可信服务器的暴露。为了最大联合/加入性能，可以将此项设置为 true，
+# 但存在其他选项以在特定高负载情况下先查询可信服务器，应在将此项设置为 true 之前进行评估。
+#
+#query_trusted_key_servers_first = false
+
+# 是否在房间加入时专门先查询 trusted_servers 中列出的服务器。此选项将对受损可信服务器的暴露限制在房间加入操作中。加入操作需要从许多源服务器收集密钥，这可能导致显著延迟。
+# 因此，默认为 true 以缓解意外延迟。安全偏执者或愿意容忍延迟者建议将此项设置为 false。请注意，将 query_trusted_key_servers_first 设置为 true 会导致此选项被忽略。
+#
+#query_trusted_key_servers_first_on_join = true
+
+# 仅查询可信服务器以获取密钥，永不查询源服务器。这适用于使用 trusted_servers 作为转发代理以缓存和去重请求的集群或自定义部署。公证服务器默认不充当转发代理，因此除非您确切知道自己在做什么，否则请勿启用此项。
+#
+#only_query_trusted_key_servers = false
+
+# 每个可信服务器批量查询中请求的最大密钥数。
+#
+#trusted_server_batch_size = 1024
+
+# conduwuit 的最大日志级别。允许 debug、info、warn 或 error。
+#
+# 另请参见：
+# https://docs.rs/tracing-subscriber/latest/tracing_subscriber/filter/struct.EnvFilter.html#directives
+#
+# **注意**：
+# 对于发布构建，tracing 箱配置为仅实现高于 error 的级别，以避免编译二进制文件中 trace 宏的不必要开销。对于调试构建，此限制不适用。
+#
+#log = "info"
+
+# 使用 ANSI 颜色输出日志。
+#
+#log_colors = true
+
+# 配置将与日志一起输出的 span 事件。
+#
+#log_span_events = "none"
+
+# 配置 CONDUWUIT_LOG EnvFilter 是否使用正则表达式匹配值。请参见 tracing_subscriber 文档中的 Directives。
+#
+#log_filter_regex = true
+
+# 切换在 tracing 日志输出中显示 ThreadId。
+#
+#log_thread_ids = false
+
+# OpenID 令牌过期/TTL（秒）。
+#
+# 这些是主要用于 Matrix 账户集成的 OpenID 令牌（例如 Element 中的 Vector 集成），*不是* OIDC/OpenID Connect 等。
+#
+#openid_token_ttl = 3600
+
+# 允许现有会话为另一客户端铸造登录令牌。
+# 这需要交互式身份验证，但存在安全隐患，
+# 因为恶意客户端可能利用此机制生成多个会话。
+# 默认启用。
+#
+#login_via_existing_session = true
+
+# 登录令牌过期/TTL（毫秒）。
+#
+# 这些是 m.login.token 端点的短期令牌。
+# 用于允许现有会话创建新会话。
+# 参见 login_via_existing_session。
+#
+#login_token_ttl = 120000
+
+# 如果不使用共享秘密 ("turn_secret")，则提供给客户端的静态 TURN 用户名。建议使用共享秘密而非静态凭证。
+#
+#turn_username = false
+
+# 如果不使用共享秘密 ("turn_secret")，则提供给客户端的静态 TURN 密码。建议使用共享秘密而非静态凭证。
+#
+#turn_password = false
+
+# 要使用的 TURN URI/服务器的向量列表。
+#
+# 将 "example.turn.uri" 替换为您的 TURN 域名，例如 coturn 的 "realm" 配置选项。如果使用 TLS 上的 TURN，请将 URI 前缀 "turn:" 替换为 "turns:"。
+#
+# 示例: ["turn:example.turn.uri?transport=udp", "turn:example.turn.uri?transport=tcp"]
+#
+#turn_uris = []
+
+# 用于生成用户名和密码生成中 HMAC-SHA1 哈希的 TURN 秘密。
+#
+# 这更安全，但如果需要，您可以使用传统的静态用户名/密码凭证。
+#
+#turn_secret = false
+
+# 从指定文件路径读取的 TURN 秘密。
+#
+# 这优先于 "turn_secret"，如果无效或打开失败，则回退到 "turn_secret"。
+#
+# 示例: "/etc/conduwuit/.turn_secret"
+#
+#turn_secret_file =
+
+# TURN TTL（秒）。
+#
+#turn_ttl = 86400
+
+# conduwuit 将使新注册用户加入的房间 ID 或房间别名的列表/向量。指定的房间必须是您在服务器上至少加入过一次的公开房间。
+#
+# 示例: ["#conduwuit:puppygock.gay", "!eoIzvAvVwY23LPDay8:puppygock.gay"]
+#
+#auto_join_rooms = []
+
+# 配置选项，自动停用尝试加入以下内容的任何用户的账户：
+# - 被禁房间
+# - 禁用房间别名
+# - 带有禁用服务器名的房间别名或 ID
+#
+# 如果您的禁用列表仅包含有毒房间或服务器，任何善意用户都不会尝试加入，则此项可能有用，
+# 并自动解决问题而无需管理员干预。
+#
+# 这还将使用户离开所有房间。此处忽略联合（例如，远程房间邀请）。
+#
+# 默认为 false，因为房间可能因非管理相关原因被禁，此项会执行完整的用户停用。
+#
+#auto_deactivate_banned_room_attempts = false
+
+# RocksDB 日志级别。这与 conduwuit 的日志级别不同。
+# 这是 RocksDB 引擎/库的日志级别，显示在您的数据库文件夹/路径中的 `LOG` 文件中。conduwuit 将通过 tracing 正常记录 RocksDB 错误，如果严重则会 panic 以确保安全。
+#
+#rocksdb_log_level = "error"
+
+# 此项未文档化。请为其贡献文档。
+#
+#rocksdb_log_stderr = false
+
+# RocksDB `LOG` 文件在旋转前的最大大小（字节）。默认为 4MB。
+#
+#rocksdb_max_log_file_size = 4194304
+
+# RocksDB 强制旋转日志之前的时间（秒）。
+#
+#rocksdb_log_time_to_roll = 0
+
+# 将此项设置为 true 以使用针对 HDD（较慢设备存储）的 RocksDB 配置选项。
+#
+# 值得注意的是，默认情况下，conduwuit 将使用启用了 Direct IO 的 RocksDB。*通常*来说，这通过绕过缓冲 I/O（系统页面缓存）来提高性能。
+# 然而，如果您的设置不常见，Direct IO 可能会导致数据库操作问题。这在 FUSE 文件系统和可能在 ZFS 文件系统上观察到。
+# RocksDB 通常会处理/纠正这些问题，但无法适应所有设置。
+# 如果您遇到任何奇怪的 RocksDB 问题，请尝试启用此选项，因为它会关闭 Direct IO，
+# 如果此选项解决了您的数据库问题，请随时在 conduwuit Matrix 房间中报告。
+#
+# 更多信息，请参见：
+# https://github.com/facebook/rocksdb/wiki/Direct-IO
+#
+#rocksdb_optimize_for_spinning_disks = false
+
+# 启用 direct-io 以通过无缓冲 I/O 提高数据库性能。
+#
+# 有关 direct I/O 和 RocksDB 的更多详情，请参见：
+# https://github.com/facebook/rocksdb/wiki/Direct-IO
+#
+# 如果数据库位于不支持 direct-io 的文件系统上，例如 FUSE，或任何形式的复杂文件系统设置，如 ZFS，请将此选项设置为 false。
+#
+#rocksdb_direct_io = true
+
+# RocksDB 用于数据库操作（如清理、同步、刷新、压缩等）的并行线程数。设置为 0 以使用所有逻辑线程。默认为您的 CPU 逻辑线程数。
+#
+#rocksdb_parallelism_threads = 随系统变化
+
+# RocksDB 将保留的 LOG 文件的最大数量。此项*不得*设置为 0。必须至少为 1。默认为 3，因为除非排除故障/调试 RocksDB bug，否则这些文件不是很有用。
+#
+#rocksdb_max_log_files = 3
+
+# 要使用的 RocksDB 数据库压缩类型。
+#
+# 可用选项为 "zstd"、"bz2"、"lz4" 或 "none"。
+#
+# 最好使用 ZSTD，作为速度/性能、存储、IO 放大和 CPU 使用之间的良好平衡。
+# 要获得更多性能但更少压缩（更多存储使用）和更少 CPU 使用，请使用 LZ4。
+#
+# 更多详情，请参见：
+# https://github.com/facebook/rocksdb/wiki/Compression
+#
+# "none" 将禁用压缩。
+#
+#rocksdb_compression_algo = "zstd"
+
+# 指定压缩算法的压缩级别。
+#
+# 默认为 32767，RocksDB 内部将其视为默认魔术数字，并转换为库的默认压缩级别，因为它们都不同。请参见 `kDefaultCompressionLevel`。
+#
+# 注意，当使用默认值时，我们可能会用专门为 conduwuit 定制的设置覆盖它。
+#
+#rocksdb_compression_level = 32767
+
+# 指定压缩算法用于 RocksDB 最底层/数据的压缩级别。默认为 32767，RocksDB 内部将其视为默认魔术数字，并转换为库的默认压缩级别，因为它们都不同。请参见 `kDefaultCompressionLevel`。
+#
+# 由于这是最底层（通常是旧的和最少使用的数据），在此处使用非常高的压缩级别可能是可取的，因为这些数据不太可能被使用。请研究您选择的压缩算法。
+#
+# 注意，当使用默认值时，我们可能会用专门为 conduwuit 定制的设置覆盖它。
+#
+#rocksdb_bottommost_compression_level = 32767
+
+# 是否启用 RocksDB 的 "bottommost_compression"。
+#
+# 以更多的 CPU 使用为代价，这将进一步压缩数据库以减少存储。建议与 ZSTD 压缩一起使用以获得最佳压缩效果。
+# 如果您试图减少数据库的存储使用，这可能有用。
+#
+# 更多详情，请参见：
+# https://github.com/facebook/rocksdb/wiki/Compression
+#
+#rocksdb_bottommost_compression = true
+
+# 数据库恢复模式（用于 RocksDB WAL 损坏）。
+#
+# 当服务器报告损坏并拒绝启动时使用此选项。
+# 将模式 2（PointInTime）设置为干净地从此损坏中恢复。
+# 服务器将从上次良好状态继续，可能是在崩溃前的几秒或几分钟。
+# 客户端可能需要运行“清除缓存并重新加载”以适应回滚。
+# 成功后，您可以将模式重置为默认并再次重启。
+# 请注意，在某些情况下，损坏错误可能至少需要 30 分钟的 PointInTime 模式操作才能清除。
+#
+# 作为最后的努力，如果 PointInTime 无法修复或解决任何问题，您可以尝试模式 3（SkipAnyCorruptedRecord），但这会使服务器处于潜在的不一致状态。
+#
+# 默认模式 1（TolerateCorruptedTailRecords）将自动丢弃数据库中损坏的最后一个条目（如果在关闭期间损坏），但仅此而已。
+# 这极不可能导致客户端不同步。
+# 要禁用任何形式的静默回滚，请将模式设置为 0（AbsoluteConsistency）。
+#
+# 选项为：
+# 0 = AbsoluteConsistency
+# 1 = TolerateCorruptedTailRecords（默认）
+# 2 = PointInTime（如果尝试恢复，请使用此项）
+# 3 = SkipAnyCorruptedRecord（您现在已放弃 Conduwuit 保修）
+#
+# 有关这些模式的更多信息，请参见：
+# https://github.com/facebook/rocksdb/wiki/WAL-Recovery-Modes
+#
+# 有关恢复损坏数据库的更多详情，请参见：
+# https://conduwuit.puppyirl.gay/troubleshooting.html#database-corruption
+#
+#rocksdb_recovery_mode = 1
+
+# 启用或禁用偏执的 SST 文件检查。这可以通过进一步的安全检查来提高 RocksDB 数据库的一致性，但可能会影响性能。
+#
+# 更多信息，请参见：
+# https://github.com/facebook/rocksdb/wiki/Online-Verification#columnfamilyoptionsparanoid_file_checks
+#
+#rocksdb_paranoid_file_checks = false
+
+# 启用或禁用 rocksdb 在运行时的校验和验证。
+# 校验和通常通过硬件加速， Overhead 较低；它们在 rocksdb 中默认启用。
+# 较旧或较慢的平台可能会从禁用中获得收益。
+#
+#rocksdb_checksums = true
+
+# 启用 rocksdb 中的“atomic flush”模式。此选项不适用于用户。
+# 它可能在未来版本中被移除或忽略。
+# 偏执者可以启用 atomic flush 以可能提高数据库完整性，代价是性能。
+#
+#rocksdb_atomic_flush = false
+
+# 数据库修复模式（用于 RocksDB SST 损坏）。
+#
+# 当服务器在运行时报告损坏或 panic 时使用此选项。
+# 如果服务器拒绝启动，请先使用恢复模式选项。
+# 启动后出现的包含 'SST' 首字母缩写的损坏错误可能需要此选项。
+#
+# - 建议在运行修复之前备份数据库目录。
+#
+# - 建议在运行修复后禁用修复模式并重启服务器。
+#
+# 有关恢复损坏数据库的更多详情，请参见：
+# https://conduwuit.puppyirl.gay/troubleshooting.html#database-corruption
+#
+#rocksdb_repair = false
+
+# 此项未文档化。请为其贡献文档。
+#
+#rocksdb_read_only = false
+
+# 此项未文档化。请为其贡献文档。
+#
+#rocksdb_secondary = false
+
+# 为压缩线程启用空闲 CPU 优先级。默认不启用，以防止在繁忙系统上压缩落后太多。
+#
+#rocksdb_compaction_prio_idle = false
+
+# 为压缩线程启用空闲 IO 优先级。这可以防止服务器操作中的任何意外延迟，通常是个好主意。默认启用。
+#
+#rocksdb_compaction_ioprio_idle = true
+
+# 禁用 RocksDB 压缩。您永远不应该将此选项设置为 true。
+# 如果您因某种原因发现自己需要使用此选项作为故障排除或 bug 的一部分，请在 conduwuit Matrix 房间中联系我们，提供信息和详情。
+#
+# 禁用压缩将导致数据库显著膨胀和爆炸性增长，性能逐渐变差，不必要的过度磁盘读/写，以及更慢的关闭和启动。
+#
+#rocksdb_compaction = true
+
+# 统计收集级别。某些显示数据库统计的管理员命令可能需要设置此选项。更高的设置可能会影响数据库性能。
+#
+# 选项为 0 到 6 的数字：
+# 0 = 无统计。
+# 1 = 发布模式下无统计（默认）。
+# 2 到 3 = 无性能影响的统计。
+# 3 到 5 = 可能有性能影响的统计。
+# 6 = 所有统计。
+#
+#rocksdb_stats_level = 1
+
+# 这是一个可配置的密码，允许您登录服务器机器人账户（当前为 `@conduit`）以进行紧急故障排除，
+# 例如恢复/重新创建您的管理员房间，或邀请自己回来。
+#
+# 其他方法请参见：
+# https://conduwuit.puppyirl.gay/troubleshooting.html#lost-access-to-admin-room
+#
+# 一旦此密码被取消设置，所有会话将为安全起见注销。
+#
+# 示例: "F670$2CP@Hw8mG7RY1$%!#Ic7YA"
+#
+#emergency_password =
+
+# 此项未文档化。请为其贡献文档。
+#
+#notification_push_path = "/_matrix/push/v1/notify"
+
+# 允许本地（仅您的服务器）存在更新/请求。
+#
+# 请注意，conduwuit 上的存在更新非常快，不像 Synapse 的。
+# 如果使用传出存在更新，必须启用此项。
+#
+#allow_local_presence = true
+
+# 允许传入的联合存在更新/请求。
+#
+# 此选项接收来自其他服务器的存在更新，但除非 `allow_outgoing_presence` 为 true，否则不发送任何。
+# 请注意，conduwuit 上的存在更新非常快，不像 Synapse 的。
+#
+#allow_incoming_presence = true
+
+# 允许传出的存在更新/请求。
+#
+# 此选项向其他服务器发送存在更新，但除非 `allow_incoming_presence` 为 true，否则不接收任何。
+# 请注意，conduwuit 上的存在更新非常快，不像 Synapse 的。
+# 如果使用传出存在更新，必须同时启用 `allow_local_presence`。
+#
+#allow_outgoing_presence = true
+
+# 在没有存在更新多少秒后，您将变为闲置。默认为 5 分钟。
+#
+#presence_idle_timeout_s = 300
+
+# 在没有存在更新多少秒后，您将变为离线。默认为 30 分钟。
+#
+#presence_offline_timeout_s = 1800
+
+# 为远程用户启用存在闲置计时器。
+#
+# 禁用此项可作为参与许多大型房间或资源有限的服务器的优化。
+# 禁用可能会导致某些远程用户的存在状态不正确（例如，卡在在线）。
+#
+#presence_timeout_remote_users = true
+
+# 允许从远程服务器接收传入的阅读回执。
+#
+#allow_incoming_read_receipts = true
+
+# 允许向远程服务器发送阅读回执。
+#
+#allow_outgoing_read_receipts = true
+
+# 允许向联合发送传出的打字更新。
+#
+#allow_outgoing_typing = true
+
+# 允许从联合接收传入的打字更新。
+#
+#allow_incoming_typing = true
+
+# 联合用户可以指示打字的最大时间。
+#
+#typing_federation_timeout_s = 30
+
+# 本地客户端可以指示打字的最小时间。这不会覆盖客户端的停止打字请求。
+# 它仅在没有停止请求时强制执行最小值。
+#
+#typing_client_timeout_min_s = 15
+
+# 本地客户端可以指示打字的最大时间。
+#
+#typing_client_timeout_max_s = 45
+
+# 将此项设置为 true 以让 conduwuit 使用 zstd 压缩 HTTP 响应体。
+# 如果 conduwuit 未使用 `zstd_compression` 功能构建，则此选项无效。
+# 请注意，启用 HTTP 压缩可能会削弱 TLS。
+# 大多数用户不需要启用此项。
+# 在决定启用之前，请参见 https://breachattack.com/ 和 https://wikipedia.org/wiki/BREACH。
+#
+#zstd_compression = false
+
+# 将此项设置为 true 以让 conduwuit 使用 gzip 压缩 HTTP 响应体。
+# 如果 conduwuit 未使用 `gzip_compression` 功能构建，则此选项无效。
+# 请注意，启用 HTTP 压缩可能会削弱 TLS。
+# 大多数用户不需要启用此项。
+# 在决定启用之前，请参见 https://breachattack.com/ 和 https://wikipedia.org/wiki/BREACH。
+#
+# 如果您在大量房间中，您可能会发现启用此项是必要的，以减少显著大的响应体。
+#
+#gzip_compression = false
+
+# 将此项设置为 true 以让 conduwuit 使用 brotli 压缩 HTTP 响应体。
+# 如果 conduwuit 未使用 `brotli_compression` 功能构建，则此选项无效。
+# 请注意，启用 HTTP 压缩可能会削弱 TLS。
+# 大多数用户不需要启用此项。
+# 在决定启用之前，请参见 https://breachattack.com/ 和 https://wikipedia.org/wiki/BREACH。
+#
+#brotli_compression = false
+
+# 设置为 true 以允许“访客”类型的用户注册。某些客户端（如 Element）会尝试自动注册访客用户。
+#
+#allow_guest_registration = false
+
+# 设置为 true 以在管理员房间中记录访客注册。请注意，如果您是公共 homeserver，这可能会很吵或不必要。
+#
+#log_guest_registrations = false
+
+# 设置为 true 以允许访客注册/用户自动加入 `auto_join_rooms` 中指定的任何房间。
+#
+#allow_guests_auto_join_rooms = false
+
+# 启用旧的未经身份验证的 Matrix 媒体存储库端点。
+# 这些端点包括：
+# - /_matrix/media/*/config
+# - /_matrix/media/*/upload
+# - /_matrix/media/*/preview_url
+# - /_matrix/media/*/download/*
+# - /_matrix/media/*/thumbnail/*
+#
+# 经过身份验证的等效端点始终启用。
+#
+# 目前默认为 true，但这很可能会在下个版本中更改。
+#
+#allow_legacy_media = true
+
+# 此项未文档化。请为其贡献文档。
+#
+#freeze_legacy_media = true
+
+# 在启动时检查媒体目录的一致性：
+# 1. 当 `media_compat_file_link` 启用时，此检查将在 Conduit 和 conduwuit 之间切换时升级媒体。
+#    必须同时启用这两个选项才能处理此情况。
+# 2. 当从目录中删除媒体时，此检查还将删除其数据库条目。
+#
+# 如果这些检查都不适用于您的用例，并且您的媒体目录非常大，将此项设置为 false 可能会减少启动时间。
+#
+#media_startup_check = true
+
+# 通过创建媒体的符号链接启用与 Conduit 媒体目录的向后兼容性。
+#
+# 仅当您计划再次使用 Conduit 时才需要此选项。
+# 否则，将此项设置为 false 可减少文件系统混乱和目录中管理这些符号链接的开销。
+# 现在默认禁用。
+# 您仍然可以返回上游 Conduit，但您必须至少运行一次 conduwuit 并将此项设置为 true，
+# 并允许 media_startup_check 发生，然后关闭以返回 Conduit。
+#
+#media_compat_file_link = false
+
+# 作为媒体启动检查的一部分，从数据库中修剪缺失的媒体。
+#
+# 这意味着如果您从媒体目录中删除文件，相应的数据库条目也将被删除。
+# 默认禁用，因为如果媒体目录意外移动或不可访问，数据库中的元数据条目将丢失。
+#
+#prune_missing_media = false
+
+# conduwuit 将拒绝从其下载远程媒体的服务器名称的正则表达式模式向量列表。
+#
+# 示例: ["badserver\.tld$", "badphrase", "19dollarfortnitecards"]
+#
+#prevent_media_downloads_from = []
+
+# 我们将阻止传入和传出联合的禁用服务器名称的正则表达式模式列表，
+# 并阻止客户端房间加入 / 远程用户邀请。
+#
+# 此检查应用于房间 ID、房间别名、发送者服务器名称、发送者用户的服务器名称、传入联合 X-Matrix 源和传出联合处理程序。
+#
+# 基本上是“全局” ACL。
+#
+# 示例: ["badserver\.tld$", "badphrase", "19dollarfortnitecards"]
+#
+#forbidden_remote_server_names = []
+
+# 我们将阻止所有传出联合房间目录请求的禁用服务器名称的正则表达式模式列表。
+# 有助于防止我们的用户误入不良服务器或空间。
+#
+# 示例: ["badserver\.tld$", "badphrase", "19dollarfortnitecards"]
+#
+#forbidden_remote_room_directory_server_names = []
+
+# 您不希望 conduwuit 向其发送传出请求的 IPv4 和 IPv6 CIDR 范围/子网的向量列表 *引号内*。
+# 默认为 RFC1918、不可路由、回环、组播和测试网地址，以确保安全。
+#
+# 请注意，这*不是*保证。您应该使用带有区域的防火墙，因为在应用层执行此操作可能存在绕过。
+#
+# 目前，这不像 Synapse 那样考虑代理的使用。
+#
+# 要禁用，请将此项设置为空向量 (`[]`)。
+#
+# 默认为：
+# ["127.0.0.0/8", "10.0.0.0/8", "172.16.0.0/12",
+# "192.168.0.0/16", "100.64.0.0/10", "192.0.0.0/24", "169.254.0.0/16",
+# "192.88.99.0/24", "198.18.0.0/15", "192.0.2.0/24", "198.51.100.0/24",
+# "203.0.113.0/24", "224.0.0.0/4", "::1/128", "fe80::/10", "fc00::/7",
+# "2001:db8::/32", "ff00::/8", "fec0::/10"]
+#
+#ip_range_denylist =
+
+# 可选的 IP 地址或网络接口名称，用于绑定 URL 预览请求的源。
+# 如果未设置，则不会绑定到特定地址或接口。
+#
+# 仅在 Linux、Android 和 Fuchsia 平台上支持接口名称；
+# 其他平台可以指定 IP 地址。
+# 要列出系统上的接口，请使用命令 `ip link show`。
+#
+# 示例: `"eth0"` 或 `"1.2.3.4"`
+#
+#url_preview_bound_interface =
+
+# 允许发送 URL 预览请求的域的向量列表。
+#
+# 这是 *包含* 匹配，而不是精确匹配。
+# 将 "google.com" 放入将匹配 "https://google.com" 和 "http://mymaliciousdomainexamplegoogle.com"
+# 将此项设置为 "*" 将允许所有 URL 预览。
+# 请注意，这会为您的服务器带来显著的攻击面，您应该意识到风险。
+#
+#url_preview_domain_contains_allowlist = []
+
+# 允许发送 URL 预览请求的明确域的向量列表。
+#
+# 这是 *精确* 匹配，而不是包含匹配。
+# 将 "google.com" 放入将匹配 "https://google.com"、"http://google.com"，但不匹配 "https://mymaliciousdomainexamplegoogle.com"
+# 将此项设置为 "*" 将允许所有 URL 预览。
+# 请注意，这会为您的服务器带来显著的攻击面，您应该意识到风险。
+#
+#url_preview_domain_explicit_allowlist = []
+
+# 不允许发送 URL 预览请求的明确域的向量列表。
+#
+# 这是 *精确* 匹配，而不是包含匹配。
+# 将 "google.com" 放入将匹配 "https://google.com"、"http://google.com"，但不匹配 "https://mymaliciousdomainexamplegoogle.com"
+# 黑名单在白名单之前检查。
+# 将此项设置为 "*" 不会执行任何操作。
+#
+#url_preview_domain_explicit_denylist = []
+
+# 允许发送 URL 预览请求的 URL 的向量列表。
+#
+# 请注意，主机是 *包含* 匹配，而不是精确匹配。
+# 将 "google.com" 放入将匹配 "https://google.com/"、"https://google.com/url?q=https://mymaliciousdomainexample.com" 和 "https://mymaliciousdomainexample.com/hi/google.com"
+# 将此项设置为 "*" 将允许所有 URL 预览。
+# 请注意，这会为您的服务器带来显著的攻击面，您应该意识到风险。
+#
+#url_preview_url_contains_allowlist = []
+
+# 抓取时 URL 预览体大小允许的最大字节数。默认为 256KB。
+#
+#url_preview_max_spider_size = 256000
+
+# 决定是否在根域上运行域白名单检查（包含和精确）的选项。
+# 不适用于 URL 包含白名单。默认为 false。
+#
+# 示例用例：如果启用此项，并且您在精确和/或包含域白名单中允许 "wikipedia.org"，它将允许 "wikipedia.org" 下的所有子域，例如 "en.m.wikipedia.org"，因为根域被检查和匹配。
+# 如果域包含白名单对您来说仍然太宽泛，但您仍希望允许根域下的所有子域，则此项有用。
+#
+#url_preview_check_root_domain = false
+
+# 禁用房间别名和房间 ID 的正则表达式模式字符串列表。
+#
+# 可以使用正则表达式或仅指定单词进行精确包含匹配（见示例）。
+#
+# 这在创建房间别名、自定义房间 ID（如果使用）时以及启动时检查，如果数据库中的任何房间别名具有禁用房间别名/ID，则会发出警告。
+#
+# 示例: ["19dollarfortnitecards", "b[4a]droom", "badphrase"]
+#
+#forbidden_alias_names = []
+
+# 禁用用户名模式/字符串的列表。
+#
+# 可以使用正则表达式或仅指定单词进行精确包含匹配（见示例）。
+#
+# 这在用户名可用性检查、注册时以及启动时检查，如果数据库中的任何本地用户具有禁用用户名，则会发出警告。
+#
+# 示例: ["administrator", "b[a4]dusernam[3e]", "badphrase"]
+#
+#forbidden_usernames = []
+
+# 在启动时立即重试向远程服务器发送失败和不完整的消息。这称为 bursting。
+# 如果禁用，所述消息可能直到为该服务器排队更多消息时才发送。
+# 除非服务器资源极其有限或服务器部署规模巨大，否则请勿更改此选项。
+# 除非您知道自己在做什么，否则请勿禁用此项。
+#
+#startup_netburst = true
+
+# 消息被丢弃且不重试。`startup_netburst` 选项必须启用，此值才会生效。
+# 除非您知道自己在做什么，否则请勿更改此值。
+# 将此值设置为 -1 以重试每条消息而不修剪队列；这可能会消耗大量磁盘。
+# 将此值设置为 0 以丢弃所有消息而不尝试重新传递。
+#
+#startup_netburst_keep = 50
+
+# 阻止非管理员本地用户发送房间邀请（本地和远程），并阻止非管理员用户接收远程房间邀请。
+#
+# 管理员始终允许发送和接收所有房间邀请。
+#
+#block_non_admin_invites = false
+
+# 允许管理员在“#admins”（管理员房间）以外的房间中输入命令，
+# 方法是在消息前加上 "\!admin" 或 "\\!admin"，后跟正常的 conduwuit 管理员命令。
+# 回复将对房间公开可见，源自发送者。
+#
+# 示例: \\!admin debug ping puppygock.gay
+#
+#admin_escape_commands = true
+
+# 在启动时自动激活 conduwuit 管理员房间控制台 / CLI。
+# 此选项也可以通过 `--console` conduwuit 参数启用。
+#
+#admin_console_automatic = false
+
+# 在启动时执行的管理员命令列表。
+#
+# 此选项也可以通过 `--execute` conduwuit 参数配置，
+# 并可以接受标准 shell 命令和环境变量。
+#
+# 例如: `./conduwuit --execute "server admin-notice conduwuit has started up at $(date)"`
+#
+# 示例: admin_execute = ["debug ping puppygock.gay", "debug echo hi"]`
+#
+#admin_execute = []
+
+# 忽略启动命令中的错误。
+#
+# 如果为 false，conduwuit 将在管理员执行命令（`--execute` / `admin_execute`）失败时错误并无法启动。
+#
+#admin_execute_errors_ignore = false
+
+# 在 SIGUSR2 上执行的管理员命令列表。
+#
+# 类似于 admin_execute，但这些命令在服务器接收到 SIGUSR2 时执行（在支持的平台上）。
+#
+#admin_signal_execute = []
+
+# 控制管理员命令日志捕获（从运行管理员命令生成的日志）的最大日志级别。
+# 在发布构建中默认为 "info"，在调试构建中默认为 "debug"。
+#
+#admin_log_capture = "info"
+
+# 应用于管理员房间的默认房间标签。
+#
+# 在某些客户端（如 Element）上，房间标签 "m.server_notice" 是一个特殊的固定房间，位于房间列表的底部。
+# conduwuit 管理员房间可以固定在此处，以便您始终有一个易于访问的管理员房间快捷方式。
+#
+#admin_room_tag = "m.server_notice"
+
+# Sentry.io 崩溃/ panic 报告、性能监控/指标等。
+# 默认不启用。conduwuit 的默认 Sentry 报告端点域为 `o4506996327251968.ingest.us.sentry.io`。
+#
+#sentry = false
+
+# Sentry 报告 URL，如果需要自定义。
+#
+#sentry_endpoint = "https://fe2eb4536aa04949e28eff3128d64757@o4506996327251968.ingest.us.sentry.io/4506996334657536"
+
+# 在 Sentry.io 崩溃报告和指标中报告您的 conduwuit server_name。
+#
+#sentry_send_server_name = false
+
+# Sentry.io 的性能监控/跟踪采样率。
+#
+# 请注意，过高的值可能会影响性能，可以通过设置为 0.0 (0%) 禁用。
+# 此值被 Sentry 读取为百分比，表示为小数。默认为 15% 的跟踪 (0.15)
+#
+#sentry_traces_sample_rate = 0.15
+
+# 是否将堆栈跟踪附加到 Sentry 报告。
+#
+#sentry_attach_stacktrace = false
+
+# 将 panic 发送到 Sentry。默认启用，但 Sentry 必须启用。
+# 全局 `sentry` 配置选项必须启用才能发送任何数据。
+#
+#sentry_send_panic = true
+
+# 将错误发送到 Sentry。默认启用，但 Sentry 必须启用。
+# 此选项仅在发布模式下有效；在调试模式下强制为 false。
+#
+#sentry_send_error = true
+
+# 控制 Sentry 发送面包屑和事务等的 tracing 日志级别
+#
+#sentry_filter = "info"
+
+# 启用 tokio-console。此选项仅与开发人员相关。
+#
+#	更多信息，请参见：
+# https://conduwuit.puppyirl.gay/development.html#debugging-with-tokio-console
+#
+#tokio_console = false
+
+# 此项未文档化。请为其贡献文档。
+#
+#test = false
+
+# 控制是否将管理员房间通知（如账户注册、密码更改、账户停用、房间目录发布等）发送到管理员房间。
+# 更新通知和正常的管理员命令响应仍将发送。
+#
+#admin_room_notices = true
+
+# 启用数据库池亲和性支持。在支持的系统上，检测块设备队列拓扑，并优化请求池以适应硬件；db_pool_workers 自动确定。
+#
+#db_pool_affinity = true
+
+# 设置数据库前端池中的工作线程数。
+# 此数字应反映系统的 I/O 能力，
+# 例如队列深度或飞行中的同时请求数。
+# 默认为 32 或 CPU 核心数的四倍，以较大者为准。
+#
+# 注意：此值仅在 db_pool_affinity 禁用或未在系统上检测到时使用，否则自动确定。
+#
+#db_pool_workers = 32
+
+# 当 db_pool_affinity 启用且检测到时，任何工作组的大小将不超过确定的值。
+# 这在线程池方法无法扩展到高端硬件的全部能力时是必要的；无限制使用检测值可能会降低性能。
+#
+# 该值乘以共享设备队列的核心数，因为组工作线程可以在这些核心中的任何一个上调度。
+#
+#db_pool_workers_limit = 64
+
+# 确定馈送数据库前端池的队列大小。
+# 队列大小由该值与池工作线程数相乘确定。
+# 当此队列满时，进行请求的 tokio 任务将让出直到有空间可用；这有利于通过避免缓冲膨胀进行流量控制，但如果太低可能会抑制吞吐量。
+#
+#db_pool_queue_mult = 4
+
+# 设置流的并发性的初始值。此值仅允许覆盖代码中的默认值。
+# 默认为 32，与代码中的默认值相同。
+# 请注意，此值本身会被计算的 stream_width_scale 覆盖，除非禁用；
+# 此值可作为固定宽度。
+#
+#stream_width_default = 32
+
+# 从为特定系统检测的基值开始缩放流宽度。
+# 基值是从硬件队列大小确定的数据库池工作线程数（例如，SSD 为 32，NVMe 为 64 或 128+）。
+# 此浮点数允许通过乘以它（例如 1.5、2.0 等）来扩大或缩小宽度。
+# 最大结果可以是池队列的大小（参见 db_pool_queue_mult），因为任何更大的值都会使 tokio 任务停滞。
+# 也可以将值缩小（例如 0.5）以提高对许多用户的响应性，代价是每个用户的吞吐量。
+#
+# 将此值设置为 0.0 会使流宽度固定为 stream_width_default 的值。
+# 默认缩放为 1.0 以匹配为系统检测到的能力。
+#
+#stream_width_scale = 1.0
+
+# 设置初始放大因子。这控制每个池工作线程发出的请求的批次大小，乘以每个流的吞吐量。
+# 此值与特定硬件特性有些抽象，可以显著大于任何线程数或队列大小。
+# 这是因为每个数据库查询可能需要多次索引查找，因此批次中的许多数据库查询可以独立进行，
+# 同时共享可能已缓存或未缓存的索引和数据块。
+# 提交大批量以减少复杂性是值得的。
+# 最大值为 32768，但仍建议使用足够的硬件。
+#
+#stream_amplification = 1024
+
+# 发送者任务工作线程数；确定发送者并行度。默认为 '0'，表示值由内部确定，
+# 可能与 tokio 工作线程数或核心数等匹配。
+# 通过设置非零值覆盖。
+#
+#sender_workers = 0
+
+# 启用监听套接字；可以设置为 false 以禁用监听。
+# 此选项仅用于开发/诊断目的。
+#
+#listening = true
+
+# 当服务器在支持的平台上接收到 SIGUSR1 时启用配置重新加载。
+#
+#config_reload_signal = true
+
+[global.tls]
+
+# 有效 TLS 证书文件的路径。
+#
+# 示例: "/path/to/my/certificate.crt"
+#
+#certs =
+
+# 有效 TLS 证书私钥的路径。
+#
+# 示例: "/path/to/my/certificate.key"
+#
+#key =
+
+# 是否监听并允许 HTTP 和 HTTPS 连接（不安全！）
+#
+#dual_protocol = false
+
+[global.well_known]
+
+# 客户端 well-known 文件将提供的服务器 URL。
+# 这不应该包含端口，而应该是一个有效的 HTTPS URL。
+#
+# 示例: "https://matrix.example.com"
+#
+#client =
+
+# 服务器 well-known 文件将提供的带有特定端口的 URL 的服务器基础域。
+# 这应该在末尾包含端口，并且不应该是 URL。
+#
+# 示例: "matrix.example.com:443"
+#
+#server =
+
+# 此项未文档化。请为其贡献文档。
+#
+#support_page =
+
+# 此项未文档化。请为其贡献文档。
+#
+#support_role =
+
+# 此项未文档化。请为其贡献文档。
+#
+#support_email =
+
+# 此项未文档化。请为其贡献文档。
+#
+#support_mxid =
+
+[global.blurhashing]
+
+# blurhashing x 组件，https://blurha.sh/ 推荐 4
+#
+#components_x = 4
+
+# blurhashing y 组件，https://blurha.sh/ 推荐 3
+#
+#components_y = 3
+
+# 服务器将 blurhash 的最大原始大小，这是将图像转换为原始数据后的大小，
+# 它应该高于上传限制但不太高。
+# 越高，客户端请求 blurhashes 的潜在负载越高。
+# 默认为 33.55MB。
+# 设置为 0 禁用 blurhashing。
+#
+#blurhash_max_raw_size = 33554432
