@@ -1,0 +1,96 @@
+port: 7880
+bind_addresses:
+  - "0.0.0.0"
+rtc:
+  tcp_port: 7881
+  port_range_start: 50800
+  port_range_end: 50900
+  use_external_ip: false
+  turn_servers:
+  - host: coturn
+    username: "username"
+    credential: "password"
+    port: 3478
+    protocol: tcp
+  - host: coturn
+    username: "username"
+    credential: "password"
+    port: 5349
+    protocol: tls
+  - host: coturn
+    username: "username"
+    credential: "password"
+    port: 3478
+    protocol: udps
+
+  congestion_control:
+    enabled: true
+    allow_pause: true
+  allow_tcp_fallback: true
+  packet_buffer_size_video: 500
+  packet_buffer_size_audio: 200
+  pli_throttle:
+    low_quality: 500ms
+    mid_quality: 1s
+    high_quality: 1s
+  enable_loopback_candidate: true
+  interfaces:
+    includes:
+      - en0
+    excludes:
+      - docker0
+
+turn:
+  enabled: false
+  domain: localhost
+  cert_file: ""
+  key_file: ""
+  tls_port: 5349
+  udp_port: 443
+  external_tls: true
+
+
+redis:
+  address: redis:6379
+
+keys:
+  devkey: "SOMETHING_SECRET_YOU_SHOULD_GENERATE"
+
+
+signal_relay:
+  retry_timeout: 30s
+  min_retry_interval: 500ms
+  max_retry_interval: 5s
+  stream_buffer_size: 1000
+
+# PSRPC
+# since v1.5.1, a more reliable, psrpc based internal rpc
+psrpc:
+  max_attempts: 3
+  timeout: 500ms
+  backoff: 500ms
+  buffer_size: 1000
+
+# customize audio level sensitivity
+audio:
+  active_level: 30
+  min_percentile: 40
+  update_interval: 500
+  smooth_intervals: 4
+  active_red_encoding: true
+
+
+room:
+  auto_create: true
+  empty_timeout: 300
+  departure_timeout: 20
+  max_participants: 0
+  enabled_codecs:
+    - mime: audio/opus
+    - mime: video/h264  
+  enable_remote_unmute: true
+  playout_delay:
+    enabled: true
+    min: 100
+    max: 2000
+  sync_streams: true
