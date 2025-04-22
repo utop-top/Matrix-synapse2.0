@@ -10,5 +10,4 @@ services:
     volumes:
       - ./config:/etc/nginx
       - ./well-known:/var/www
-      - ./sync_cache:/var/cache/nginx/sync_cache
       - /root/Certs/Certbot:/etc/nginx/ssl
