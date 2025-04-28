@@ -1,0 +1,140 @@
+# 1. PersistentVolume for conduwuit_db
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: conduwuit-db-pv
+spec:
+  capacity:
+    storage: 10Gi  # 根据实际目录大小调整
+  accessModes:
+    - ReadWriteOnce
+  persistentVolumeReclaimPolicy: Retain
+  storageClassName: manual
+  hostPath:
+    path: /root/Matrix/C/conduwuit_db
+    type: Directory
+---
+# 2. PersistentVolumeClaim for conduwuit_db
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: conduwuit-db-pvc
+  namespace: conduwuit
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 10Gi
+  storageClassName: manual
+---
+# 3. PersistentVolume for conduwuit.toml
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: conduwuit-config-pv
+spec:
+  capacity:
+    storage: 1Mi  # 配置文件较小，容量可小一些
+  accessModes:
+    - ReadWriteOnce
+  persistentVolumeReclaimPolicy: Retain
+  storageClassName: manual
+  hostPath:
+    path: /root/Matrix/C/conduwuit.toml
+    type: File
+---
+# 4. PersistentVolumeClaim for conduwuit.toml
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: conduwuit-config-pvc
+  namespace: conduwuit
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 1Mi
+  storageClassName: manual
+---
+# 5. Deployment with PVCs for both db and config
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: conduwuit
+  namespace: conduwuit
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: conduwuit
+  template:
+    metadata:
+      labels:
+        app: conduwuit
+    spec:
+      nodeSelector:
+        kubernetes.io/hostname: v2202410238245291044  # 替换为实际节点名
+      containers:
+      - name: conduwuit
+        image: forgejo.ellis.link/continuwuation/continuwuity:main
+        imagePullPolicy: Always
+        env:
+        - name: CONDUWUIT_DATABASE_PATH
+          value: "/var/lib/conduwuit"
+        - name: CONDUWUIT_PORT
+          value: "6167"
+        - name: CONDUWUIT_MAX_REQUEST_SIZE
+          value: "20000000"
+        - name: CONDUWUIT_ALLOW_REGISTRATION
+          value: "true"
+        - name: CONDUWUIT_REGISTRATION_TOKEN
+          value: "天王盖地虎"
+        - name: CONDUWUIT_ALLOW_FEDERATION
+          value: "true"
+        - name: CONDUWUIT_ALLOW_CHECK_FOR_UPDATES
+          value: "true"
+        - name: CONDUWUIT_TRUSTED_SERVERS
+          value: '["matrix.org"]'
+        - name: CONDUWUIT_ADDRESS
+          value: "0.0.0.0"
+        - name: CONDUWUIT_CONFIG
+          value: "/etc/conduwuit.toml"
+        ports:
+        - containerPort: 6167
+          name: http
+        - containerPort: 8446
+          name: https
+        volumeMounts:
+        - name: db-volume
+          mountPath: /var/lib/conduwuit
+        - name: config-volume
+          mountPath: /etc/conduwuit.toml
+      volumes:
+      - name: db-volume
+        persistentVolumeClaim:
+          claimName: conduwuit-db-pvc
+      - name: config-volume
+        persistentVolumeClaim:
+          claimName: conduwuit-config-pvc
+---
+# 6. Service
+apiVersion: v1
+kind: Service
+metadata:
+  name: conduwuit-service
+  namespace: conduwuit
+spec:
+  selector:
+    app: conduwuit
+  ports:
+  - name: http
+    port: 6167
+    targetPort: 6167
+    nodePort: 30067
+  - name: https
+    port: 8446
+    targetPort: 8446
+    protocol: TCP
+  type: NodePort
