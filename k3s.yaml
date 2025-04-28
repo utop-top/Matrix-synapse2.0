@@ -1,0 +1,44 @@
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nginx-host
+  namespace: matrix
+spec:
+  replicas: 1  # 单实例，如果需要多个副本可以调整
+  selector:
+    matchLabels:
+      app: nginx-host
+  template:
+    metadata:
+      labels:
+        app: nginx-host
+    spec:
+      hostNetwork: true  # 等价于 Docker Compose 的 network_mode: "host"
+      restartPolicy: Always  # 等价于 restart: always
+      containers:
+      - name: nginx-host  
+        image: nginx  # 使用 nginx 镜像
+        ports:
+        - containerPort: 80  
+        - containerPort: 443  
+        volumeMounts:
+        - name: config-volume
+          mountPath: /etc/nginx  
+        - name: well-known-volume
+          mountPath: /var/www  
+        - name: ssl-volume
+          mountPath: /etc/nginx/ssl  
+      volumes:
+      - name: config-volume
+        hostPath:
+          path: /root/Matrix/K3s-volume/nginx_host/config  
+          type: Directory
+      - name: well-known-volume
+        hostPath:
+          path: /root/Matrix/K3s-volume/nginx_host/well-known  
+          type: Directory
+      - name: ssl-volume
+        hostPath:
+          path: /root/Certs/Certbot/archive  
+          type: Directory
