@@ -1,5 +1,5 @@
 #注意pod内存超限
-
+# 获取节点名称  kubectl get nodes
 
 kubectl create namespace matrix  创建空间
 部署删除
