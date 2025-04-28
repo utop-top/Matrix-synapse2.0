@@ -51,7 +51,7 @@ spec:
           value: "your_password"
         volumeMounts:
         - name: synapse-data
-          mountPath: /data
+          mountPath: /data    #挂载到容器内部的路径
         livenessProbe:
           exec:
             command: ["curl", "--fail", "http://localhost:8008/_matrix/static/"]
@@ -61,9 +61,9 @@ spec:
           failureThreshold: 5
       volumes:
       - name: synapse-data
-        hostPath:
+        hostPath:        #本地挂载地址方便使用
           path: /root/Matrix/deploy-volume/Synapse/synapse
-          type: DirectoryOrCreate
+          type: DirectoryOrCreate     
 #      restartPolicy: Always
 
 ---
