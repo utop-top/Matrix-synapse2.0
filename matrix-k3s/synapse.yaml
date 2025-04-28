@@ -24,7 +24,7 @@ spec:
         ports:
         - containerPort: 8008
         - containerPort: 8448
-        - containerPort: 9093
+        - containerPort: 9093   #synapse main端口用于worker机通讯，在k8s中必须暴漏
         resources:  # 修复 resources 字段的缩进和结构
           requests:
             memory: "1Gi"
