@@ -1,0 +1,470 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: synapse
+  namespace: matrix
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: synapse
+  template:
+    metadata:
+      labels:
+        app: synapse
+    spec:
+      securityContext:
+        runAsUser: 991
+        runAsGroup: 991
+        fsGroup: 991
+      containers:
+      - name: synapse
+        image: matrixdotorg/synapse:latest
+        ports:
+        - containerPort: 8008
+        - containerPort: 8448
+        - containerPort: 9093
+        resources:  # 修复 resources 字段的缩进和结构
+          requests:
+            memory: "1Gi"
+            cpu: "500m"
+          limits:
+            memory: "3Gi"
+            cpu: "2"
+        env:
+        - name: SYNAPSE_CONFIG_DIR
+          value: "/data"
+        - name: SYNAPSE_CONFIG_PATH
+          value: "/data/homeserver.yaml"
+        - name: SYNAPSE_SERVER_NAME
+          value: "synapse"
+        - name: SYNAPSE_REPORT_STATS
+          value: "no"
+        - name: SYNAPSE_DB_HOST
+          value: "synapse-db"
+        - name: SYNAPSE_DB_USER
+          value: "synapse_user"
+        - name: SYNAPSE_DB_NAME
+          value: "synapse"
+        - name: SYNAPSE_DB_PASSWORD
+          value: "your_password"
+        volumeMounts:
+        - name: synapse-data
+          mountPath: /data
+        livenessProbe:
+          exec:
+            command: ["curl", "--fail", "http://localhost:8008/_matrix/static/"]
+          initialDelaySeconds: 30
+          periodSeconds: 30
+          timeoutSeconds: 10
+          failureThreshold: 5
+      volumes:
+      - name: synapse-data
+        hostPath:
+          path: /root/Matrix/deploy-volume/Synapse/synapse
+          type: DirectoryOrCreate
+      # restartPolicy 不适用于 Deployment，已移除
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: synapse-db
+  namespace: matrix
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: synapse-db
+  template:
+    metadata:
+      labels:
+        app: synapse-db
+    spec:
+      securityContext:
+        runAsUser: 999
+        runAsGroup: 999
+        fsGroup: 999
+      containers:
+      - name: postgres
+        image: postgres:latest
+        ports:
+        - containerPort: 5432
+        env:
+        - name: POSTGRES_DB
+          value: "synapse"
+        - name: POSTGRES_USER
+          value: "synapse_user"
+        - name: POSTGRES_PASSWORD
+          value: "your_password"
+        - name: POSTGRES_INITDB_ARGS
+          value: "--encoding=UTF8 --locale=C"
+        volumeMounts:
+        - name: db-data
+          mountPath: /var/lib/postgresql/data
+        - name: db-conf
+          mountPath: /etc/postgresql/postgresql.conf
+        command: ["postgres", "-c", "config_file=/etc/postgresql/postgresql.conf"]
+        livenessProbe:
+          exec:
+            command: ["pg_isready", "-U", "synapse_user"]
+          initialDelaySeconds: 10
+          periodSeconds: 10
+          timeoutSeconds: 5
+          failureThreshold: 5
+      volumes:
+      - name: db-data
+        hostPath:
+          path: /root/Matrix/deploy-volume/Synapse/synapse_db
+          type: DirectoryOrCreate
+      - name: db-conf
+        hostPath:
+          path: /root/Matrix/deploy-volume/Synapse/synapse_db_conf/postgresql.conf
+          type: File
+      # restartPolicy 不适用于 Deployment，已移除
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: generic-worker-1
+  namespace: matrix
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: generic-worker-1
+  template:
+    metadata:
+      labels:
+        app: generic-worker-1
+    spec:
+      securityContext:
+        runAsUser: 991
+        runAsGroup: 991
+        fsGroup: 991
+      containers:
+      - name: worker
+        image: matrixdotorg/synapse:latest
+        ports:
+        - containerPort: 9001
+        command: ["/start.py", "run", "--config-path=/data/homeserver.yaml", "--config-path=/data/workers/generic_worker_1.yaml"]
+        env:
+        - name: SYNAPSE_WORKER
+          value: "synapse.app.generic_worker"
+        volumeMounts:
+        - name: synapse-data
+          mountPath: /data
+      volumes:
+      - name: synapse-data
+        hostPath:
+          path: /root/Matrix/deploy-volume/Synapse/synapse
+          type: DirectoryOrCreate
+      # restartPolicy 不适用于 Deployment，已移除
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: media-worker
+  namespace: matrix
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: media-worker
+  template:
+    metadata:
+      labels:
+        app: media-worker
+    spec:
+      securityContext:
+        runAsUser: 991
+        runAsGroup: 991
+        fsGroup: 991
+      containers:
+      - name: worker
+        image: matrixdotorg/synapse:latest
+        ports:
+        - containerPort: 9002
+        command: ["/start.py", "run", "--config-path=/data/homeserver.yaml", "--config-path=/data/workers/media_worker.yaml"]
+        env:
+        - name: SYNAPSE_WORKER
+          value: "synapse.app.media_repository"
+        volumeMounts:
+        - name: synapse-data
+          mountPath: /data
+      volumes:
+      - name: synapse-data
+        hostPath:
+          path: /root/Matrix/deploy-volume/Synapse/synapse
+          type: DirectoryOrCreate
+      # restartPolicy 不适用于 Deployment，已移除
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: federation-sender-1
+  namespace: matrix
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: federation-sender-1
+  template:
+    metadata:
+      labels:
+        app: federation-sender-1
+    spec:
+      securityContext:
+        runAsUser: 991
+        runAsGroup: 991
+        fsGroup: 991
+      containers:
+      - name: worker
+        image: matrixdotorg/synapse:latest
+        ports:
+        - containerPort: 9003
+        resources:
+          limits:
+            memory: "1024Mi"
+        command: ["/start.py", "run", "--config-path=/data/homeserver.yaml", "--config-path=/data/workers/federation_sender_1.yaml"]
+        env:
+        - name: SYNAPSE_WORKER
+          value: "synapse.app.federation_sender"
+        volumeMounts:
+        - name: synapse-data
+          mountPath: /data
+      volumes:
+      - name: synapse-data
+        hostPath:
+          path: /root/Matrix/deploy-volume/Synapse/synapse
+          type: DirectoryOrCreate
+      # restartPolicy 不适用于 Deployment，已移除
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: federation-sender-2
+  namespace: matrix
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: federation-sender-2
+  template:
+    metadata:
+      labels:
+        app: federation-sender-2
+    spec:
+      securityContext:
+        runAsUser: 991
+        runAsGroup: 991
+        fsGroup: 991
+      containers:
+      - name: worker
+        image: matrixdotorg/synapse:latest
+        ports:
+        - containerPort: 9006
+        resources:
+          limits:
+            memory: "1024Mi"
+        command: ["/start.py", "run", "--config-path=/data/homeserver.yaml", "--config-path=/data/workers/federation_sender_2.yaml"]
+        env:
+        - name: SYNAPSE_WORKER
+          value: "synapse.app.federation_sender"
+        volumeMounts:
+        - name: synapse-data
+          mountPath: /data
+      volumes:
+      - name: synapse-data
+        hostPath:
+          path: /root/Matrix/deploy-volume/Synapse/synapse
+          type: DirectoryOrCreate
+      # restartPolicy 不适用于 Deployment，已移除
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: federation-sender-3
+  namespace: matrix
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: federation-sender-3
+  template:
+    metadata:
+      labels:
+        app: federation-sender-3
+    spec:
+      securityContext:
+        runAsUser: 991
+        runAsGroup: 991
+        fsGroup: 991
+      containers:
+      - name: worker
+        image: matrixdotorg/synapse:latest
+        resources:
+          limits:
+            memory: "1024Mi"
+        command: ["/start.py", "run", "--config-path=/data/homeserver.yaml", "--config-path=/data/workers/federation_sender_3.yaml"]
+        env:
+        - name: SYNAPSE_WORKER
+          value: "synapse.app.federation_sender"
+        volumeMounts:
+        - name: synapse-data
+          mountPath: /data
+      volumes:
+      - name: synapse-data
+        hostPath:
+          path: /root/Matrix/deploy-volume/Synapse/synapse
+          type: DirectoryOrCreate
+      # restartPolicy 不适用于 Deployment，已移除
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: push-worker
+  namespace: matrix
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: push-worker
+  template:
+    metadata:
+      labels:
+        app: push-worker
+    spec:
+      securityContext:
+        runAsUser: 991
+        runAsGroup: 991
+        fsGroup: 991
+      containers:
+      - name: worker
+        image: matrixdotorg/synapse:latest
+        ports:
+        - containerPort: 9004
+        command: ["/start.py", "run", "--config-path=/data/homeserver.yaml", "--config-path=/data/workers/push_worker.yaml"]
+        env:
+        - name: SYNAPSE_WORKER
+          value: "synapse.app.pusher"
+        volumeMounts:
+        - name: synapse-data
+          mountPath: /data
+      volumes:
+      - name: synapse-data
+        hostPath:
+          path: /root/Matrix/deploy-volume/Synapse/synapse
+          type: DirectoryOrCreate
+      # restartPolicy 不适用于 Deployment，已移除
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mas
+  namespace: matrix
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mas
+  template:
+    metadata:
+      labels:
+        app: mas
+    spec:
+      securityContext:
+        runAsUser: 0
+        runAsGroup: 0
+        fsGroup: 0
+      containers:
+      - name: mas
+        image: ghcr.io/element-hq/matrix-authentication-service:latest
+        ports:
+        - containerPort: 8080
+        command: ["mas-cli", "server", "--config=/data/config.yaml"]
+        volumeMounts:
+        - name: mas-data
+          mountPath: /data
+      volumes:
+      - name: mas-data
+        hostPath:
+          path: /root/Matrix/deploy-volume/Synapse/mas
+          type: Directory
+      # restartPolicy 不适用于 Deployment，已移除
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mas-db
+  namespace: matrix
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mas-db
+  template:
+    metadata:
+      labels:
+        app: mas-db
+    spec:
+      securityContext:
+        runAsUser: 999
+        runAsGroup: 999
+        fsGroup: 999
+      containers:
+      - name: postgres
+        image: postgres:latest
+        ports:
+        - containerPort: 5432
+        env:
+        - name: POSTGRES_DB
+          value: "mas"
+        - name: POSTGRES_USER
+          value: "synapse_user"
+        - name: POSTGRES_PASSWORD
+          value: "your_password"
+        - name: POSTGRES_INITDB_ARGS
+          value: "--encoding=UTF8 --locale=C"
+        volumeMounts:
+        - name: mas-db-data
+          mountPath: /var/lib/postgresql/data
+      volumes:
+      - name: mas-db-data
+        hostPath:
+          path: /root/Matrix/deploy-volume/Synapse/mas/mas_db
+          type: DirectoryOrCreate
+      # restartPolicy 不适用于 Deployment，已移除
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: synapse-redis
+  namespace: matrix
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: synapse-redis
+  template:
+    metadata:
+      labels:
+        app: synapse-redis
+    spec:
+      containers:
+      - name: redis
+        image: redis:6-alpine
+        ports:
+        - containerPort: 6379
+      # restartPolicy 不适用于 Deployment，已移除
+---

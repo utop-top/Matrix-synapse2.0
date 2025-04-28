@@ -1,0 +1,91 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: synapse-admin-service
+  namespace: ele-hq
+spec:
+  selector:
+    app: synapse-admin
+  ports:
+  - port: 8111
+    targetPort: 80
+  type: NodePort
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: element-web-service
+  namespace: ele-hq
+spec:
+  selector:
+    app: element-web
+  ports:
+  - port: 8200
+    targetPort: 80
+  type: NodePort
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: element-call-service
+  namespace: ele-hq
+spec:
+  selector:
+    app: element-call
+  ports:
+  - port: 7100
+    targetPort: 8080
+  type: NodePort
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: lk-jwt-service
+  namespace: ele-hq
+spec:
+  selector:
+    app: lk-jwt
+  ports:
+  - port: 7111
+    targetPort: 8080
+  type: NodePort
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: livekit-service
+  namespace: ele-hq
+spec:
+  selector:
+    app: livekit
+  ports:
+  - name: port-7880
+    port: 7880
+    targetPort: 7880
+    protocol: TCP
+  - name: port-7881
+    port: 7881
+    targetPort: 7881
+    protocol: TCP
+  - name: port-7882
+    port: 7882
+    targetPort: 7882
+    protocol: TCP
+  - name: port-50850
+    port: 50850
+    targetPort: 50850
+    protocol: UDP
+  type: NodePort
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: ele-hq-redis-service
+  namespace: ele-hq
+spec:
+  selector:
+    app: ele-hq-redis
+  ports:
+  - port: 6377
+    targetPort: 6379
+  type: NodePort

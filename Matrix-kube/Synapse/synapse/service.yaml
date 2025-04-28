@@ -1,0 +1,148 @@
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: synapse
+  namespace: matrix
+spec:
+  selector:
+    app: synapse
+  ports:
+  - name: http
+    port: 8008
+    targetPort: 8008
+    nodePort: 30008
+  - name: https
+    port: 8448
+    targetPort: 8448
+    nodePort: 30448
+  - name: main
+    port: 9093
+    targetPort: 9093
+  type: NodePort
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: synapse-db
+  namespace: matrix
+spec:
+  selector:
+    app: synapse-db
+  ports:
+  - port: 5432
+    targetPort: 5432
+    nodePort: 30412
+  type: NodePort
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: generic-worker-1
+  namespace: matrix
+spec:
+  selector:
+    app: generic-worker-1
+  ports:
+  - port: 9001
+    targetPort: 9001
+    nodePort: 30901
+  type: NodePort
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: media-worker
+  namespace: matrix
+spec:
+  selector:
+    app: media-worker
+  ports:
+  - port: 9002
+    targetPort: 9002
+    nodePort: 30902
+  type: NodePort
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: federation-sender-1
+  namespace: matrix
+spec:
+  selector:
+    app: federation-sender-1
+  ports:
+  - port: 9003
+    targetPort: 9003
+    nodePort: 30903
+  type: NodePort
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: federation-sender-2
+  namespace: matrix
+spec:
+  selector:
+    app: federation-sender-2
+  ports:
+  - port: 9006
+    targetPort: 9006
+    nodePort: 30906
+  type: NodePort
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: push-worker
+  namespace: matrix
+spec:
+  selector:
+    app: push-worker
+  ports:
+  - port: 9004
+    targetPort: 9004
+    nodePort: 30904
+  type: NodePort
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: mas
+  namespace: matrix
+spec:
+  selector:
+    app: mas
+  ports:
+  - port: 8080
+    targetPort: 8080
+    nodePort: 30100
+  type: NodePort
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: mas-db
+  namespace: matrix
+spec:
+  selector:
+    app: mas-db
+  ports:
+  - port: 5432
+    targetPort: 5432
+    nodePort: 30422
+  type: NodePort
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: synapse-redis
+  namespace: matrix
+spec:
+  selector:
+    app: synapse-redis
+  ports:
+  - port: 6379
+    targetPort: 6379
+    nodePort: 30678
+  type: NodePort
