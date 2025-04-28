@@ -1,0 +1,18 @@
+services:
+  nginx-host:
+    image: nginx
+    container_name: nginx-host
+    restart: always
+    network_mode: "host"
+    ports:
+#      - "8777:8077"
+      - "443:443"
+      - "443:443/udp"
+    volumes:
+      - ./config:/etc/nginx
+      - ./well-known:/var/www
+      - ./synapse:/etc/nginx/synapse
+      - ./other:/etc/nginx/other
+      - ./Certbot:/etc/nginx/ssl
+
+
