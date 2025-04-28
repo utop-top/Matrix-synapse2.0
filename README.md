@@ -9,6 +9,7 @@ jwt.example.com
 livekit.examle.com
 
 
+
 你需要调整的文件
 nginx中的域名
 mas config中的配置及域名
